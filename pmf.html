@@ -1,0 +1,3106 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+  <title>PMFed</title>
+  <meta name="generator" content="Amaya, see http://www.w3.org/Amaya/" />
+  <link href="css/prism.css" rel="stylesheet" />
+  <style>
+pre[class*="language-"] {
+      font-size: 12px;
+      font-style: normal;
+      font-family: monospace;
+      background-color: #ffffff;
+}
+
+span.code {
+  font-size: 10pt;
+  color: black;
+}
+span.code_comment {
+  font-size: 10pt;
+  color: green;
+}
+  </style>
+</head>
+
+<body>
+
+<script src="js/prism.js"></script>
+<script src="js/prism_keep_tag.js"></script>
+
+<h1 style="text-align:center;margin-left:auto;margin-right:auto;">"XML &amp; JSON" Editor PMFed</h1>
+
+<h2>Table of Contents</h2>
+
+<div class="toc">
+<ul>
+  <li><a href="#L30">Introduction</a> 
+    <ul>
+      <li><a href="#L1874">What is PMFed ?</a></li>
+    </ul>
+  </li>
+  <li><a href="#L149">Tutorial</a> 
+    <ul>
+      <li><a href="#L1987">PMFed for XML</a> 
+        <ul>
+          <li><a href="#L1989">Classes Generation / XSD Schema Import</a> 
+            <ul>
+              <li><a href="#L4145">XSD schema structure</a></li>
+              <li><a href="#L1999">Restrictions on the schemas</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#L2212">PMFed for JSON</a> 
+        <ul>
+          <li><a href="#L2214">Classes Generation / JSON Schema Import</a> 
+            <ul>
+              <li><a href="#L4444">JSON schema structure</a></li>
+              <li><a href="#L2258">Restrictions of JSON Schemas</a></li>
+              <li><a href="#L2274">"anyOf" tag</a></li>
+              <li><a href="#L2275">"oneOf" tag</a></li>
+              <li><a href="#L2276">"allOf" tag</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#L2439">Advanced Usage</a> 
+    <ul>
+      <li><a href="#L2589">Mapping of Simple Type to Formular Widgets</a> 
+        <ul>
+          <li><a href="#L1093">JSON Simple Types Mapping</a></li>
+          <li><a href="#L1307">XSD Simple Types Mapping</a></li>
+        </ul>
+      </li>
+      <li><a href="#L25891">Customization</a> 
+        <ul>
+          <li><a href="#L2711">TreeView Customization</a> 
+            <ul>
+              <li><a href="#L1923">Tree item icons</a></li>
+              <li><a href="#L1939">Tree item labels</a></li>
+              <li><a href="#L1955">Forbidding items of some classes to appears in the tree </a></li>
+              <li><a href="#L1954">Forbidding items of some classes to be interactively created in the tree </a></li>
+              <li><a href="#L1956">Forbidding items of some classes to be interactively deleted in the tree</a></li>
+              <li><a href="#L1957">Adding custom actions from the context menu</a></li>
+            </ul>
+          </li>
+          <li><a href="#L2720">Formulars Customization</a> 
+            <ul>
+              <li><a href="#L20313">JSON Simple Types</a></li>
+              <li><a href="#L13071">XSD Simple Types</a></li>
+              <li><a href="#L2561">Complex Types in formulars</a></li>
+              <li><a href="#L2632">Extra formular widgets</a></li>
+              <li><a href="#L2786">Customization of formulars: custom attributes</a></li>
+              <li><a href="#L2787">Customization of formulars: title banner</a></li>
+              <li><a href="#L2814">Customization of formulars: help banner</a></li>
+              <li><a href="#L2815">Customization of formulars: notebook</a></li>
+            </ul>
+          </li>
+          <li><a href="#L272011">Customization of items as last leaves of a tree (1)</a></li>
+          <li><a href="#L13786">Customization of items as last leaves of a tree (2)</a></li>
+          <li><a href="#L13787">Customization of items as last leaves of a tree (3)</a></li>
+          <li><a href="#L10917">Customization of formulars: UI formulars</a></li>
+          <li><a href="#L2782">Customization of References</a></li>
+          <li><a href="#L2811">Choice of "selectable" objects for a reference</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#L2839">Appendix</a> 
+    <ul>
+      <li><a href="#L2441">PMF Framework Built-In classes</a></li>
+      <li><a href="#L957">Observers</a></li>
+      <li><a href="#L28391">References declaration in XSDs</a></li>
+      <li><a href="#L3047">References declaration in JSON Schemas</a></li>
+      <li><a href="#L3048">File Splitting</a></li>
+      <li><a href="#L3049">Comments in XML</a></li>
+    </ul>
+  </li>
+  <li><a href="#L3839">Requirement / Dependencies</a> 
+    <ul>
+      <li><a href="#L24117">Requirement </a></li>
+      <li><a href="#L24123">Dependencies</a></li>
+    </ul>
+  </li>
+  <li><a href="#L3551">FAQ</a> 
+    <ul>
+      <li><a href="#L3553">The application at startup tries to load a file which does not follow the model
+      specified</a></li>
+      <li><a href="#L3575">XSD/JSON validation does not work</a></li>
+      <li><a href="#L3585">The tree view display the tree items with strange labels</a></li>
+      <li><a href="#L3589">From the logger validation outout, click on the error msg does not jump to the item in the
+        tree</a></li>
+    </ul>
+  </li>
+</ul>
+</div>
+
+<h2 id="L30">Introduction</h2>
+
+<h3 id="L1874">What is PMFed ?</h3>
+
+<p><strong>PMFed is a graphical tree-formular editor application for XML or JSON, written in Python.</strong></p>
+
+<p>It can read, edit and save any model which has been generated by the PMFed utility <strong>pmfgen</strong>.
+This utility generates from a <strong>XSD</strong> or <strong>JSON Schema</strong> all necessary python classes defining a model.</p>
+
+<p>Moreover, a developer or an attentive user can edit the generated classes for fine tuning.</p>
+
+<p>The main features of <strong>PMFed</strong> are:</p>
+<ul>
+  <li><strong>model based</strong>: works for every (not <span style="color:#ff0000">**too**</span> complicated) XSD or
+    JSON schema.</li>
+  <li>model classes are <strong>generated</strong> from the schema.</li>
+  <li><strong>intelligent tree</strong>: creation of new children based on the <strong>restrictions specified in the schema</strong>
+  (choice, minOccurs/maxOccurs).</li>
+  <li><strong>formulars</strong> are <span style="color:#ff0000">"real" formulars</span> for user friendly editing (not just strings to edit like in so many others apps)</li>
+  <li><strong>formulars are automatically derived from the model</strong>: a formular contains all the widgets
+    necessary to edit all the attributes of an element, and each widget in a formular is dedicated to the type of the
+    underlying attribute type. (SpinBox for integers types, ComboBox for enums etc.) and follow the <strong>possible
+    restrictions</strong> on the simple types specified in the schema (pattern, min, max, etc...).</li>
+  <li><strong>formulars</strong> can also be defined with <strong>Qt ui files</strong>.</li>
+  <li><strong>XSD/JSON schema validation on the "fly" during editing</strong> (and jump to location on validation error
+    msg click).</li>
+  <li><strong>support for "comments" in XML (see in Appendix)</strong>.</li>
+  <li><strong>support for "references" in XML models (unidirectional or bi-directional)</strong> through special
+    notations in the XSD schema (see in Appendix).</li>
+  <li><strong>support for "references" in JSON models (unidirectional or bi-directional)</strong> through special
+    notations in the JSON schema (see in Appendix).</li>
+  <li><strong>fully configurable</strong> through customizable generated python classes (see examples later).</li>
+  <li><strong><span style="color:#ff0000">support for file splitting</span></strong> (see in Appendix).</li>
+</ul>
+
+<p>More specifically, for users, the <strong>PMFed</strong> (<strong>PySide</strong> based) application allows to:</p>
+<ul>
+  <li>open/read/save XML/JSON files compliant with the XSD/JSON schema (python module given in argument to the
+    application).</li>
+  <li>edit the tree (add/delete children, cut/copy/paste).</li>
+  <li>edit the items properties through formulars/widgets.</li>
+  <li>full undo-redo.</li>
+  <li>rich set of controls in formular (for every XSD simple type or JSON simple type).</li>
+</ul>
+
+<p><strong>How does it work?</strong></p>
+
+<p>Given a schema (XSD or JSON), a bunch of classes corresponding to the complex types defined in the schema is created
+in a python module (with the command line tool <strong>pmfgen.py</strong> furnished with the application).</p>
+
+<p>Moreover, for each class generated in the module, a super class is also created (in its own python module), allowing
+complete control over the generated classes. Finally, a framework is furnished, which is completely user model
+agnostic. The framework implements a super class where the basic functionalities of the generated classes are
+implemented. The <strong>PMFed</strong> application simply relies on this framework (and the generated classes), and
+thus allows the tree-formular editor to work out of the box. The framework furnishes also a treeview, a formular view
+and a logger view (with document validation) for the <strong>PMFed</strong> application.</p>
+
+<p>Because the user will certainly want it, great care has be done so that the user can <strong>customize</strong> the
+<strong>tree-formular application</strong> to fit its own needs:</p>
+<ul>
+  <li>formulars are easily custumizable</li>
+  <li>tree view is easily customizable</li>
+</ul>
+
+<p><strong>In short, everything is customizable in a easy way</strong> (hopefully!)</p>
+
+<h2 id="L149">Tutorial</h2>
+
+<p>This tutorial presents how to start with PMFed.</p>
+
+<p>After having installed the python code in a folder of your choice, set the environment variable
+<code><strong>PMF_MODELS</strong></code> to any folder on the file system of your choice. 
+This simply defines the path where the models will be search in.</p>
+
+<p>Starting the PMFed application is as follow:</p>
+
+<pre><span style="font-size: 10pt">&gt; python PMFed.py &lt;model&gt;</span></pre>
+
+<p>where the <strong>&lt;model&gt;</strong> refers to a folder inside the PMF_MODELS "root" folder. 
+But of what exactly consists the model?</p>
+</p>
+
+<p>The user has written a XSD schema or a JSON Schema. This is his first "model", and for simplicity we assume he has
+named his model "<code>mymodel</code>": the XSD file is <code>mymodel.xsd</code> (or <code>mymodel.json</code>). Create
+the folder <code>mymodel</code> under <code><strong>PMF_MODELS</strong></code>, and put the schema file in the folder
+<code>mymodel</code>.</p>
+
+<p>First step is to "import" the schema, i.e. to generate python classes for this model. This is done with the utility
+<code>pmfgen.py</code>.</p>
+
+<p><code>cd</code> to folder <code>mymodel</code>, and from the command line, type:</p>
+<pre><span style="font-size: 10pt">&gt; python pmfgen.py -t xsd -d html -o mymodel.py mymodel.xsd</span></pre>
+
+<p>or</p>
+<pre><span style="font-size: 10pt">&gt; python pmfgen.py -t json -d html -o mymodel.py mymodel.json</span></pre>
+
+<p>A python file <code><strong>mymodel.py</strong></code> is created as well as several other files.
+<p>You should have in the file system:</p>
+
+<pre><span style="font-size: 10pt">mymodel
++--- mymodel.xsd
++--- mymodel.py
+     customclasses
+     +--- class1.py
+          class2.py
+          ...
+     html
+     +--- class1.html
+          class2.html
+          ...</span></pre>
+
+<p>Create per hand the folders <code>"icons"</code> and <code>"forms"</code> under the folder <code>mymodel</code>:</p>
+<ul>
+  <li>under the folder <code>"icons"</code>, you can put icons files named after the classes names found in the model
+    (optional).</li>
+  <li>under the folder <code>"forms"</code>, you can put Qt ui files named after the classes names found in the model
+    (optional).</li>
+</ul>
+<pre><span style="font-size: 10pt">mymodel
++--- mymodel.xsd
++--- mymodel.py
+     customclasses
+     +--- class1.py
+          class2.py
+          ...
+     html
+     +--- class1.html
+          class2.html
+          ...
+     icons
+     +--- class1.png
+          class2.png
+          ...
+     forms
+     +--- class1.ui
+          class2.ui
+          ...</span></pre>
+
+<p>You are ready to start the PMFed application: type the from the shell:</p>
+<pre><span style="font-size: 10pt">&gt; python PMFed.py mymodel</span></pre>
+
+<p>The application should start-up. Congratulations. You can create, load and save files in the application and edit
+them.</p>
+
+<h3 id="L1987">PMFed for XML</h3>
+
+<h4 id="L1989">Classes Generation / XSD Schema Import</h4>
+
+<p>The <strong>pmfgen.py</strong> importer generates classes based on the XSD schema:</p>
+<pre><span style="font-size: 10pt">&gt; python pmfgen.py -t xsd -o mymodel.py [-d html] mymodel.xsd</span></pre>
+
+<p>It generates the "main" python module <code>mymodel.py</code> and two folders: folder <code>"customclasses"</code>
+containing a bunch of python modules for super classes for all the classes (complex types) defined in the model; folder
+<code>"html_help"</code> containing html files (1 for each class) destined for the html help (if option <code>-d html</code>
+was given). The user should create the (optional) folders <code>"icons"</code> and <code>"forms"</code>, where the
+icons for the tree icons for each class are specified, and where the user custom formulars (qt ui files) can be
+placed.</p>
+
+<p>The "main" python module should never be edited. The super classes modules can be edited by hand, as well as the
+html files.</p>
+
+<p>On a second run, the python module <code>mymodel.py</code> is overwritten, but the folders for super classes and
+html help files are not: new folders are created : <code>"customclasses_new"</code> and <code>"html_help_new"</code>. It is
+the responsability of the user to merge them with the already edited files inside the <code>"customclasses"</code> and
+<code>"html_help"</code> folders when the user has updated its xsd schema.</p>
+
+<h5 id="L4145">XSD schema structure</h5>
+
+<p>The user is invited to explore the examples of XSDs to see which kind of XSDs syntax/structure is understood by the
+importer. A large set of the XSD schema syntax is supported. More precisely, because the importer generates classes
+from the complex types specified in the XSD, the following XSD structure is required:</p>
+<ul>
+  <li>complex types are specified within the tags <code>&lt;xs:complexType&gt;</code> and
+    <code>&lt;/xs:complexType&gt;</code>.</li>
+  <li>inside a complex type, no other complex type can be defined (but other complex types can -of course- be used),
+    i.e. all complex types are defined in a "flat" list under the <code>&lt;xs:schema&gt;</code> tag.</li>
+</ul>
+
+<p>Note: As special feature, the importer can generate classes where objects owns "references" (pointers) -as in
+defined in UML diagrams- on others objects. This is performed through the use of <strong>special tags</strong> in the
+XSDs (see in appendix).</p>
+
+<h5 id="L1999">Restrictions on the schemas</h5>
+<ul>
+  <li>Inside a <code><strong>&lt;xs:choice&gt;</strong></code>, only complex types are allowed (no simple types or
+    mixed simple types/complex types)</li>
+  <li>Data Type not supported 
+    <ul>
+      <li>anyURI</li>
+      <li>hexBinary</li>
+      <li>base64Binary</li>
+      <li>NOTATION</li>
+    </ul>
+  </li>
+  <li>String data types not supported 
+    <ul>
+      <li>ENTITIES</li>
+      <li>ENTITY</li>
+      <li>language</li>
+      <li>Name</li>
+      <li>NCName</li>
+      <li>NMTKEN</li>
+      <li>NMTOKENS</li>
+      <li>normalizedString</li>
+      <li>QName</li>
+      <li>token</li>
+      <li>IDREFS</li>
+    </ul>
+  </li>
+  <li>Tag not supported 
+    <ul>
+      <li>annotation</li>
+      <li>any</li>
+      <li>anyAttribute</li>
+      <li>appinfo</li>
+      <li>documentation</li>
+      <li>field</li>
+      <li>import</li>
+      <li>include</li>
+      <li>key</li>
+      <li>keyref</li>
+      <li>notation</li>
+      <li>redefine</li>
+      <li>substitution</li>
+      <li>selector</li>
+      <li>union</li>
+      <li>unique</li>
+    </ul>
+  </li>
+  <li>Restrictions not supported 
+    <ul>
+      <li>whiteSpace</li>
+      <li>totalDigits</li>
+    </ul>
+  </li>
+  <li>Misc not supported 
+    <ul>
+      <li>complexType "mixed"</li>
+    </ul>
+  </li>
+</ul>
+
+<p>This seems to be at first sight a long list. But infact none of these XSD specifications tags are needed to define a
+full featured model.</p>
+
+<h3 id="L2212">PMFed for JSON</h3>
+
+<h4 id="L2214">Classes Generation / JSON Schema Import</h4>
+
+<p>The <strong>pmfgen.py</strong> importer generates classes based on JSON schemas:</p>
+<pre><span style="font-size: 10pt">&gt; python pmfgen.py -t json -o &lt;python_module&gt;.py [-d html] &lt;json schema&gt;.xsd</span></pre>
+
+<p>It generates the "main" python module <code>&lt;python_module&gt;.py</code> and two folders: folder
+<code>"customclasses"</code> containing a bunch of python modules for super classes for all the classes (complex types)
+defined in the model; folder <code>"html_help"</code> containing html files (1 for each class) destined for the html help
+(if option <code>-d html</code> was given). The user should create the (optional) folders <code>"icons"</code> and
+<code>"forms"</code>, where the icons for the tree icons for each class are specified, and where the user custom
+formulars (qt ui files) can be placed.</p>
+
+<p>The "main" python module should never be edited. The super classes modules can be edited by hand, as well as the
+html files.</p>
+
+<p>On a second run, the python module <code>&lt;python_module&gt;.py</code> is overwritten, but the folders for super
+classes and html help files are not: new folders are created : <code>"customclasses_new"</code> and
+<code>"html_help_new"</code>. It is the responsability of the user to merge them with the already edited files inside the
+<code>"customclasses"</code> and <code>"html_help"</code> folders when the user has updated its json schema.</p>
+
+<h5 id="L4444">JSON schema structure</h5>
+
+<p>The user is invited to explore the examples of JSON Schemas to see which kind of JSON syntax/structure is understood
+by the importer. A large set of the JSON Schema syntax is supported. </p>
+
+<p>Similarly to XSD schemas, the preferred way to define complex types is by defining them as a flat list of complex
+types, in the section "<strong>definitions</strong>" of the schema. But the importer also understands schemas where the
+complex types are defined "inline", i.e. inside other complex types.</p>
+
+<p>Note: As special feature, the importer can generate classes where objects owns "references" (pointers) -as in
+defined in UML diagrams- on others objects. This is performed through the use of <strong>special directives</strong> in
+the JSON (see in appendix).</p>
+
+<p>A major difference between a complex types defined in the section "definitions" and "inline" is that
+"<strong>inline</strong>" complex types are "<strong>anonymous</strong>" :</p>
+
+<pre><code class="language-json" data-keep-tags="strong">...
+"definitions": {
+    
+    "CLASS1" : { "type":"object",     // this defines the class "CLASS1"
+        "properties" : {   
+            "LABEL"    : { "type" : "string" },
+            "SKIP"     : { "type" : "boolean" }     
+        }
+    },
+    "CLASS2" : { "type":"object",     // this defines the class "CLASS2"
+        "properties" : {
+            "STR"      : { "type" : "string" },
+            "INTEGER"  : { "type" : "integer" }
+        }
+    }
+}</code></pre>
+
+
+<p>But "inline" classes are anonymous:</p>
+<pre><code class="language-json" data-keep-tags="strong">{
+   "$schema" : "http://json-schema.org/draft-04/schema#",
+   "title" : "CONFIG",
+   "type" : "object",
+      "properties" : {
+        
+         "ATTR1" : { "type":"integer"},
+        
+         "PROPERTY" : { "type":"object",
+            "properties" : {
+                "PROP1" : { "type":"number" },
+                "PROP2" : { "type":"number" },
+                "PROP3" : { "type":"number" }
+            }
+        }
+    }
+} </code></pre>
+
+<p>Indeed, what is the class name of the root object? And what is the class name of the object stored in the "PROPERTY"
+element ? </p>
+
+<p>For the <strong>"root class"</strong>, the class name will be per default
+"<strong></strong><strong>JSONROOT</strong>". This can be overwritten by specifying in the root <strong>"$comment"</strong> the
+following directive: "<strong>##classname#&lt;name&gt;##</strong> &lt;rest of the description&gt;". Then the root class
+will be named <strong>&lt;name&gt;</strong>.</p>
+
+<p>For <strong>"inline" classes</strong>, the class name is per default the name of the tag, here "PROPERTY", or can be
+specified in the description following the "<strong>directive</strong>" technique previously used for the root object:
+</p>
+<pre><code class="special language-json">{
+   "$schema" : "http://json-schema.org/draft-04/schema#",
+   "title" : "CONFIG",
+   "description" : "",
+   "<strong>$comment</strong>" : "<strong>##classname#CONFIG##</strong>  the class for the root object",
+   "type" : "object",
+      "properties" : {
+        
+         "ATTR1" : { "type":"integer" },
+        
+         "PROPERTY" : { "type":"object", "<strong>$comment</strong>":"<strong>##classname#PROPS##</strong> the class name for this record",
+            "properties" : {
+                "PROP1" : { "type":"number" },
+                "PROP2" : { "type":"number" }
+            }
+        }
+    }
+}</code></pre>
+
+<p>So the root class will be named "<strong>CONFIG</strong>" and the "PROPERTY" element will be an object
+of type "<strong>PROPS</strong>". Whereever classnames are implicitely or explicitely set, the user must take care
+himself that there are no class name "inconsistencies" in the schema. For example, in case of "implicit" class names,
+inconsistencies can occur if the element "PROPERTY" is used more than once with different contents : for example, the
+following schema would be badly imported:</p>
+<pre><code class="language-json" data-keep-tags="strong">{
+   "$schema" : "http://json-schema.org/draft-04/schema#",
+   "title" : "CONFIG",
+   "<strong>$comment</strong>" : "<strong>##classname#CONFIG##</strong>  root class name",
+   "type" : "object",
+      "properties" : {
+        
+         "ATTR1" : { "type":"integer" },
+        
+         "OBJECT2" : { "type":"object",
+            "ATTR2" : { "type":"integer" },
+        
+            "<strong>PROPERTY</strong>" : { "type":"object",
+               "properties" : {
+                  "O1_PROP1" : { "type":"number" },
+                  "O1_PROP2" : { "type":"number" }
+                }
+            }
+         },
+        
+         "OBJECT2" : { "type":"object",
+            "ATTR2" : { "type":"integer" },
+        
+            "<strong>PROPERTY</strong>" : { "type":"object",
+               "properties" : {
+                  "O2_PROP1" : { "type":"integer" },
+                  "O2_PROP2" : { "type":"number"  },
+                  "O2_PROP3" : { "type":"boolean" }
+               }
+            }
+        }
+    }
+}</code></pre>
+
+<p>Indeed, in this case, the class name for the object stored in element "<strong>PROPERTY</strong>" of "OBJECT1" would
+be "<strong>PROPERTY</strong>". The class name for the object stored in element "<strong>PROPERTY</strong>" of
+"OBJECT2" would be "<strong>PROPERTY</strong>" as well. But their content is obviously different.</p>
+
+<p>To resolve the conflict, changing the names of the attributes can be a solution: </p>
+<pre><code class="language-json" data-keep-tags="strong">{
+   "$schema" : "http://json-schema.org/draft-04/schema#",
+   "title" : "CONFIG",
+   "$comment" : "<strong>##classname#CONFIG##</strong>  root class name",
+   "type" : "object",
+      "properties" : {
+        
+         "ATTR1" : { "type":"integer },
+        
+         "OBJECT1" : { "type":"object",
+            "ATTR1" : { "type":"integer"},
+        
+            "<strong>OBJECT1_PROPERTY</strong>" : { "type":"object",
+               "properties" : {
+                  "O1_PROP1" : { "type":"number" },
+                  "O1_PROP2" : { "type":"number" }
+               }
+            }
+         },
+        
+         "OBJECT2" : { "type":"object", 
+            "ATTR2" : { "type":"integer", 
+        
+            "<strong>OBJECT2_PROPERTY</strong>" : { "type":"object",
+               "properties" : {
+                  "O2_PROP1" : { "type":"integer" },
+                  "O2_PROP2" : { "type":"number" },
+                  "O2_PROP3" : { "type":"boolean" }
+               }
+           }
+        }
+    }
+}</code></pre>
+
+<p>or, without changing the names of the attributes, by specifying explicitely with the $comment directive trick the
+name of the classes:</p>
+<pre><code class="language-json" data-keep-tags="strong">{
+   "$schema" : "http://json-schema.org/draft-04/schema#",
+   "title" : "CONFIG",
+   "$comment" : "<strong>##classname#CONFIG##</strong>  root class name",
+   "type" : "object",
+      "properties" : {
+        
+         "ATTR1" : { "type":"integer" },
+        
+         "OBJECT1" : { "type":"object"
+            "ATTR1" : { "type":"integer" },
+        
+            "<strong>PROPERTY</strong>" : { "type":"object", "$comment":"<strong>##classname#OBJECT1_PROPERTY##</strong>",
+               "properties" : {
+                  "O1_PROP1" : { "type":"number" },
+                  "O1_PROP2" : { "type":"number" }
+               }
+            }
+         },
+        
+         "OBJECT2" : { "type":"object"
+            "ATTR2" : { "type":"integer" },
+        
+            "<strong>PROPERTY</strong>" : { "type":"object", "$comment":"<strong>##classname#OBJECT2_PROPERTY##</strong>",
+               "properties" : {
+                  "O2_PROP1" : { "type":"integer" },
+                  "O2_PROP2" : { "type":"number" },
+                  "O2_PROP3" : { "type":"boolean" }
+               }
+            }
+        }
+    }
+}</code></pre>
+
+<p>Or, finally, the classes names can be given in the "<strong>definitions</strong>" paragraph": </p>
+<pre><code class="language-json" data-keep-tags="strong">{
+   "$schema" : "http://json-schema.org/draft-04/schema#",
+   "title" : "CONFIG",
+   "$comment" : "##classname#CONFIG##",
+   "type" : "object",
+      "properties" : {
+        
+         "ATTR1" : { "type":"integer" },
+        
+         "OBJECT1" : { "type":"object",
+            "ATTR1" : { "type":"integer" },
+        
+            "<strong>PROPERTY</strong>" : { <strong>"$ref" : "#/definitions/OBJECT1_PROPERTY"</strong> }
+         },
+        
+         "OBJECT2" : { "type":"object",
+            "ATTR2" : { "type":"integer" },
+        
+            "<strong>PROPERTY</strong>" : { <strong>"$ref" : "#/definitions/OBJECT2_PROPERTY"</strong> }
+        }
+    },
+    
+    "definitions": {
+        "<strong>OBJECT1_PROPERTY</strong>" : { "type":"object",
+            "properties" : {
+                "O1_PROP1" : { "type":"number" },
+                "O1_PROP2" : { "type":"number" }
+            }
+        },                
+        "<strong>OBJECT2_PROPERTY</strong>": { "type":"object",
+           "properties" : {
+               "O2_PROP1" : { "type":"integer" },
+               "O2_PROP2" : { "type":"number" },
+               "O2_PROP3" : { "type":"boolean" }
+            }
+        }
+    }
+}</code></pre>
+
+<h5 id="L2258">Restrictions of JSON Schemas</h5>
+<ul>
+  <li><strong>"anyOf"</strong> supported only for complex types</li>
+  <li><strong>"oneOf"</strong> supported only for complex types</li>
+  <li><strong>"allOf"</strong> supported only for complex types or "complex types + simple attributes" to <strong>define derived classes</strong></li>
+  <li><strong>"format"</strong> supported only for strings (date-time -Full ISO8601 DateTime-, date, time, email, hostname, ipv4, ipv6, uri)</li>
+  <li>others ?</li>
+</ul>
+
+<h5 id="L2274">"anyOf" tag</h5>
+
+<p>Tags "<strong>anyOf</strong>" is similar to the XSD tags
+"<strong>xs:choice</strong>".</p>
+
+<pre><code class="language-json" data-keep-tags="strong">[
+  { "LABEL": "label" , "SKIP": true } ,  ## object of which type ?
+  { "STR"  : "label" }                ,  ## object of which type ?
+  { "LABEL": "label" , "SKIP": true }    ## object of which type ?
+]</code></pre>
+
+<p>If an array contains objects of only 1 type, array items can be "normally" parsed 
+(the parser "knows" of which type are the array items). 
+But in the case of an array containing objects of different types, this is indeed a problem.
+How to read correctly the JSON files, i.e. how to recognize the classes of the items being read? 
+The reader must be able to recognize the types of the objects in the array. 
+In the PMF framework, this is achieved by imposing on the array items that their classes contain only required attributes.
+By analysing the list of keys of an object, the class of the object can be recognized.</p>
+
+
+<p>The JSON schema then would look likes: </p>
+<pre><code class="language-json" data-keep-tags="strong">...
+"definitions": {
+    "MIXED_TYPES_ARRAY" : { "type": "array", "items": 
+        {
+            "anyOf" : 
+            [ 
+                { "$ref": "#/definitions/<strong>CLASS1</strong>" }, 
+                { "$ref": "#/definitions/<strong>CLASS2</strong>" }
+            ]
+        }
+    },
+    "<strong>CLASS1</strong>" : { "type":"object", 
+        "properties" : {
+            "LABEL" : { "type" : "string" },
+            "SKIP"  : { "type" : "boolean" }     
+        },
+        "additionalProperties": false,
+        "required" : ["LABEL", "SKIP"]
+    },
+    "<strong>CLASS2</strong>" : { "type":"object", 
+        "properties" : {
+             "STR"  : { "type" : "string" }   
+        },
+        "additionalProperties": false,
+        "required" : ["STR"]
+    }
+}</code></pre>
+
+<p>Nevertheless, there are cases where the design of the schema is such that the "anyOf" array contains objects of
+different types, but the different types have the <strong> same attributes</strong>, and only the content of the attributes
+allow thus to recognize (hopefully) the class of the items:<p>
+
+<pre><code class="language-json" data-keep-tags="strong">...
+"MYLIST" : [
+    { "LABEL": "label1" , "INFO": "object of class CLASS1" } , 
+    { "LABEL": "label2" , "INFO": "object of class CLASS2" } ,
+    { "LABEL": "label3" , "INFO": "object of class CLASS1" } ,
+]</code></pre>
+
+<p>Here the content of the <strong>INFO</strong> attributes "indicates" the class of the items.</p>
+
+<p>In this case, the containing class must re-define the method <strong>json_oneof_query_child_class</strong>
+in order to select the right class.
+The method is re-defined in the generated "Super" class:</p>
+
+<pre><code class="language-python">def json_anyof_query_child_class(self, key, datadict):
+        '''
+        '''
+        if key == "MYLIST":
+            if datadict["INFO"] == "object of class CLASS1":
+                return "CLASS1"
+            if datadict["INFO"] == "object of class CLASS2":
+                return "CLASS2"
+        
+        # not found
+        return None
+</code></pre>
+
+<p>Note: the default behavior is to compare the list of attributes of the items with the 
+classes specified in the "anyOf" definition in the json schema.</p>
+
+<h5 id="L2275">"oneOf" tag</h5>
+
+<p>Tag "<strong>oneOf</strong>" is similar to the XSD tag "<strong>xs:choice</strong>" with
+<strong>maxOccurs="1"</strong>.</p>
+
+<pre><code class="language-json" data-keep-tags="strong"> ...
+"definitions": {
+    "ONEOF_OBJECT" : {  "type":"object" , 
+        "oneOf" : [ 
+            { "$ref": "#/definitions/CLASS1" }, 
+            { "$ref": "#/definitions/CLASS2" }
+        ]
+    },
+    
+    "CLASS1" : { "type":"object", 
+        "properties" : {
+            "LABEL" : { "type" : "string" },
+            "SKIP"  : { "type" : "boolean" } 
+        },
+        "additionalProperties": false,
+        "required" : ["LABEL", "SKIP"]
+    },
+
+    "CLASS2" : { "type":"object", 
+        "properties" : {
+             "STR"  : { "type" : "string" } 
+        },
+        "additionalProperties": false,
+        "required" : ["TYPE", "STR"]
+    }
+}</code></pre>
+
+<p>and a valid JSON file would look like </p>
+<pre><code class="language-json" data-keep-tags="strong"> ...
+"ONEOF_OBJECT1" : { "LABEL": "label" , "SKIP": true } ,
+"ONEOF_OBJECT2" : { "STR" : "label" } ,
+"ONEOF_OBJECT3" : { "LABEL": "label" , "SKIP": true} ,
+ ...</code></pre>
+
+
+<p>Note: for items inside a "oneOf", the "additionalProperties" flag is mandatory and should be set to false for a
+succesfull validation</p>
+
+
+<h5 id="L2276">"allOf" tag</h5>
+
+<p>Tag "<strong>allOf</strong>" allows to defined derived classes.</p>
+
+<p>To define a derived class, declare the class as following:</p>
+
+<pre><code class="language-json" data-keep-tags="strong">
+   "definitions": {
+        "address": {
+            "type": "object",
+            "properties": {
+                "street_address": { "type": "string" },
+                "city":           { "type": "string" },
+                "state":          { "type": "string" }
+            },
+            "required": ["street_address", "city", "state"]
+        },
+        "location" : {
+            "type": "object",
+            "properties": { 
+                "location": { "type": "string", "enum": [ "paris", "london", "new-york" ] }
+            },
+            "required": ["location"]
+        },
+        
+       <strong>"business_address": </strong> {
+            "type": "object",
+            "allOf": [
+               { "$ref": "#/definitions/<strong>address</strong>" },
+               { "$ref": "#/definitions/<strong>location</strong>" }
+           ]
+        },
+        
+        ...
+</code></pre>
+
+<p>Here the class <code>business_address</code> derives from 2 bases classes <code>address</code> and <code>location</code>.</p>
+
+<p>Or similarly:</p>
+
+<pre><code class="language-json" data-keep-tags="strong">
+      "shipping_address": {
+            "type": "object",
+            "allOf": [
+               { "$ref": "#/definitions/<strong>address</strong>" },
+               { "properties":
+                   { "type": { "type": "string", "enum": [ "residential", "business" ] } },
+                   "required": ["type"]
+               }
+           ]
+        }
+</code></pre> 
+
+<p>Here the class <code>shipping_address</code> derives from 1 base classe <code>address</code> and has the extra attribute <code>type</code>.</p>
+       
+<p>Note: Definition of classes with <code>allOf</code> with inside only properties (without ref to a base class) is not supported.</p>
+
+
+<p></p>
+
+<h2 id="L2439">Advanced Usage</h2>
+
+<h3 id="L2589">Mapping of Simple Type to Formular Widgets</h3>
+
+<p>The widgets in the formular are derived from the type of the simple types defined in the schema</p>
+
+<p></p>
+
+<h4 id="L1093">JSON Simple Types Mapping</h4>
+
+<table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2">
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 15%;">Schema Type</td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 15%;">Formular Widget Type</td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 15%;">Qt Widget Type</td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 55%;">Details</td>
+    </tr>
+    <tr>
+      <td>"type":"<strong>integer</strong>" </td>
+      <td>std_integer</td>
+      <td>Qt spinbox</td>
+      <td>customizable through <strong>minimum</strong>, <strong>maximum</strong>, <strong>minimumExclusive</strong>
+        etc...</td>
+    </tr>
+    <tr>
+      <td>"type":"<strong>number</strong>" </td>
+      <td>std_float </td>
+      <td>Qt lineedit</td>
+      <td>with related pattern to allow only float input</td>
+    </tr>
+    <tr>
+      <td>"type":"<strong>boolean</strong>" </td>
+      <td>std_boolean</td>
+      <td>Qt checkbox</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>"type":"<strong>string</strong>" </td>
+      <td>std_lineedit</td>
+      <td>Qt lineedit</td>
+      <td>default</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_textedit</td>
+      <td>Qt textedit</td>
+      <td>if <strong>minLength/maxLength</strong> is defined in the schema and is larger than 64</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_datetime</td>
+      <td>Qt dateEdit</td>
+      <td>if format "<strong>date-time</strong>"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_date</td>
+      <td>Qt dateEdit</td>
+      <td>if format "<strong>date</strong>"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_time</td>
+      <td>Qt dateEdit</td>
+      <td>if format "<strong>time</strong>"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_combobox </td>
+      <td>Qt combobox</td>
+      <td>when an <strong>enum</strong> is specified in the schema</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_radiobtns</td>
+      <td>Qt radiobuttons</td>
+      <td>when an <strong>enum</strong> is specified in the schema (alternative to std_combobox)</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_browser</td>
+      <td></td>
+      <td>compound widget composed of one lineedit and a button to select a data - to be set per hand by the user in
+        the formular definition</td>
+    </tr>
+    <tr>
+      <td>"type":"<strong>array</strong>"</td>
+      <td>pmf_simplelist</td>
+      <td>Qt listview</td>
+      <td>compound widget to allow addind/removing entries in the list</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_checkboxlist</td>
+      <td>Qt check listview</td>
+      <td>and an <strong>enum</strong> is specified with "<strong>uniqueItem</strong>" for them</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_checkcombobox</td>
+      <td>Qt check combobox</td>
+      <td>and an <strong>enum</strong> is specified with "<strong>uniqueItem</strong>" for them (alternative to
+        std_checkboxlist)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p></p>
+
+<p>The importer tries to map the simple types to the "best" widgets depending on the restrictions/properties given in
+the schema. Moreover, the generated formulars/formular properties can be edited by hand (in the generated "super"
+classes).</p>
+
+<p></p>
+
+<h4 id="L1307">XSD Simple Types Mapping</h4>
+
+<table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2">
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 15%;">Schema Type</td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 15%;">Formular Widget Type</td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 15%;">Qt Widget Type</td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 55%;">Details</td>
+    </tr>
+    <tr>
+      <td>xs:time</td>
+      <td>std_time</td>
+      <td>Qt timeEdit</td>
+      <td>with related format</td>
+    </tr>
+    <tr>
+      <td>xs:date</td>
+      <td>std_date</td>
+      <td>Qt dateEdit</td>
+      <td>with related format</td>
+    </tr>
+    <tr>
+      <td>xs:dateTime</td>
+      <td>std_datetime</td>
+      <td>Qt dateTimeEdit</td>
+      <td>with related format</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:gDay</td>
+      <td>std_gDay</td>
+      <td>Qt dateEdit</td>
+      <td>with related format</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:gMonth</td>
+      <td>std_gMonth</td>
+      <td>Qt dateEdit</td>
+      <td>with related format</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:gMonthDay</td>
+      <td>std_gMonthDay</td>
+      <td>Qt dateEdit</td>
+      <td>with related format</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:gYear</td>
+      <td>std_gYear</td>
+      <td>Qt dateEdit</td>
+      <td>with related format</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:gYearMonth</td>
+      <td>std_gYearMonth</td>
+      <td>Qt dateEdit</td>
+      <td>with related format</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:duration</td>
+      <td>std_duration</td>
+      <td>QtLineEdit</td>
+      <td>with related pattern</td>
+ 
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_duration</td>
+      <td>QtLineEdit</td>
+      <td>with "view" property</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:boolean</td>
+      <td>std_checkbox</td>
+      <td>Qt checkbox</td>
+      <td></td>
+ 
+    </tr>
+    <tr>
+      <td>xs:integer</td>
+      <td>std_integer</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:byte</td>
+      <td>std_byte</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:short</td>
+      <td>std_short</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:int</td>
+      <td>std_int</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:long</td>
+      <td>std_long</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:unsignedByte</td>
+      <td>std_ubyte</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:unsignedShort</td>
+      <td>std_ushort</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:unsignedInt</td>
+      <td>std_uint</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:unsignedLong</td>
+      <td>std_ulong</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:decimal</td>
+      <td>std_decimal</td>
+      <td>Qt lineedit</td>
+      <td>with related pattern to allow only float input</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:double</td>
+      <td>std_double</td>
+      <td>Qt lineedit</td>
+      <td>with related pattern to allow only float input</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:float</td>
+      <td>std_float</td>
+      <td>Qt lineedit</td>
+      <td>with related pattern to allow only float input</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:positiveInteger</td>
+      <td>std_pos_integer</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:negativeInteger</td>
+      <td>std_neg_integer</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:nonPositiveInteger</td>
+      <td>std_non_pos_integer</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:nonNegativeInteger</td>
+      <td>std_non_neg_integer</td>
+      <td>Qt spinbox</td>
+      <td>with related min/max</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:list</td>
+      <td>std_checkboxlist</td>
+      <td>Qt check listview</td>
+      <td>and an <strong>enum</strong> is specified with "<strong>uniqueItem</strong>" for them (an xs:list is not a
+        "array" of value, but a multichoice object)</td>
+ 
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_checkcombobox</td>
+      <td>Qt check combobox</td>
+      <td>and an <strong>enum</strong> is specified with "<strong>uniqueItem</strong>" for them (an xs:list is not a
+        "array" of value, but a multichoice object)</td>
+ 
+    </tr>
+    <tr>
+      <td>xs:string</td>
+      <td>std_lineedit</td>
+      <td>Qt lineedit</td>
+      <td>default for xs:string</td>
+ 
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_choice</td>
+      <td>Qt combobox</td>
+      <td>when restriction with xs:enumeration</td>
+ 
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_textedit</td>
+      <td>Qt textedit</td>
+      <td>depending of the <strong>minLength/maxLength</strong> properties specifid in the schema</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_browser</td>
+      <td>Qt lineedit + button</td>
+      <td>compound widget composed of one lineedit and a button to select a data </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_dynamicchoice</td>
+      <td>Qt combobox</td>
+      <td>when value from a list evaluated at runtime</td>
+    </tr>
+  </tbody>
+</table>
+
+<p></p>
+
+<p>The importer tries to map the simple types to the "best" widgets depending on the restrictions/properties given in
+the schema. Moreover, the generated formulars/formular properties can be edited by hand (in the generated "super"
+classes in the "customclasses" folder).</p>
+
+<h3 id="L25891">Customization</h3>
+
+<p>The ability to customize the generated classes -and thus the application based on these classes- is an absolute
+must, even for the simpliest models. When the models become more complicated, how easy customization is performed
+becomes essential.</p>
+
+<p>The <strong>tree-formular</strong> application gives a good introduction to explain how customization can be
+achieve. First we summarize what can be customized at all in this application:</p>
+<ul>
+  <li>in the tree view 
+    <ul>
+      <li>the tree icons of the tree items</li>
+      <li>the tree labels of the tree items</li>
+      <li>which classes are displayed in the tree (the user may wish that some of the items in the model are not
+        displayed in the tree at all -depending on conditions- )</li>
+      <li>which classes can be instanciated "interactively" -throught the context menu "New Chid/Sibling"- or not</li>
+      <li>what else...</li>
+    </ul>
+  </li>
+  <li>in the formular view 
+    <ul>
+      <li>which attributes are hidden -not displayed in the formular- </li>
+      <li>which attributes are disabled -and thus not editable-</li>
+      <li>how controls are displayed (hidden, disabled, etc.) in function of the values of others attributes of the
+        tree item</li>
+      <li>what else...</li>
+    </ul>
+  </li>
+</ul>
+
+<p></p>
+
+<p>We recall that the <strong>pmfgen</strong> classes generator generates</p>
+<ul>
+  <li>the main class &lt;module&gt;.py which is meant to be not editable</li>
+  <li>the bunch of classes named &lt;class&gt;Super.py, each class coresponding to a "complex type" in the schema. This
+    is where the customization takes places.</li>
+</ul>
+
+<h4 id="L2711">TreeView Customization</h4>
+
+<p>This is cretainly the first thing the use would customize: the look and feel of the tree, and more specifically the
+<strong>icons</strong> and <strong>labels</strong> in the tree.</p>
+
+<h5 id="L1923">Tree item icons</h5>
+
+<p>The generated super classes contain the method</p>
+<pre><code class="language-python" data-keep-tags="strong">
+    # --------------------------------------------------------------------------
+    # tree view customization
+    # -------------------------------------------------------------------------- 
+    ...
+    
+    def get_treeicon(self):
+        '''
+        '''
+        return self.tree_icon
+</code></pre>
+
+
+<p>So you just have to edit the line </p>
+<pre><code class="language-python" data-keep-tags="strong">        # defining a tree icon
+        tree_icon = os.path.join(os.environ['PMF_MODELS'], "xml_basic", "icons", "&lt;classname&gt;.png")
+</code></pre>
+
+
+<p>in the class to point to a icon file. Or you do not edit the line at all, but put a png file
+<code>"&lt;classname&gt;.png"</code> in the dedicated folder.</p>
+
+<h5 id="L1939">Tree item labels</h5>
+
+<p>The generated super classes all contain the following lines</p>
+<pre><code class="language-python" data-keep-tags="strong">
+        # defining default tree label tag
+        tree_custom_tag = None
+
+        # defining which attribute is used to draw the tree label
+        tree_label_attribute = 'Label'
+</code></pre>
+
+<p>The default implementation of the method <code>get_treelabel</code> which is responsible to displax the tree labels
+returns the string.</p>
+<pre><span style="font-size: 10pt">       "&lt;tag&gt; &lt;tree_label_attribute&gt;"</span></pre>
+
+<p>where the <code>tag</code> is the XML/JSON tag defined in the schema for the related object, and the
+<code>tree_label_attribute</code> the value of the object "tree_label_attribute" </p>
+
+<p>If the object has not such an attribute, then the tree label will appear like: </p>
+<pre><span style="font-size: 10pt">        "&lt;tag&gt; &lt;?label?&gt;"</span></pre>
+
+<p>Because the user may want to overwrite this behavior, all the super classes implement per default their own method
+<code>get_treelabel</code>, which all call a default implemetation too and is given with: </p>
+<pre><code class="language-python" data-keep-tags="strong">    ...       
+    # --------------------------------------------------------------------------
+    # tree view customization
+    # --------------------------------------------------------------------------   
+    def get_treelabel(self):
+        '''
+        '''
+        handler = PMFTreeViewCustomizationHandler()
+        return handler.get_treelabel(self)</code></pre>
+
+<p>so that all objects have the same rule to build their tree label. You just have to edit the
+"PMFTreeViewCustomizationHandler" methods to change the default behaviour.</p>
+
+<p>As in the default implementation, the tree label looks like (in the tree view of the editor):</p>
+<pre><span style="font-size: 10pt">   tree label = "&lt;tag&gt; &lt;label&gt;"</span></pre>
+
+<p>The tag is the XML/JSON tag defined in the schema for the related object, but this can be overwritten by
+overwritting the class attribute <code>tree_custom_tag</code> of the super class:</p>
+<pre><code class="language-python" data-keep-tags="strong">        ...
+        # defining default tree label tag
+        tree_custom_tag = ...</code></pre>
+
+<p>The label is the value of the Label attribute of the object, but this can be overwritten by overwritting the class
+attribute <code>tree_label_attribute</code> of the super class:</p>
+<pre><code class="language-python" data-keep-tags="strong">        ...
+        # defining which attribute is used to draw the tree label
+        tree_label_attribute = ...</code></pre>
+
+<p>Finally, this tree label is enclosed between a prefix and a suffix ("decorations") given by the methods: </p>
+<pre><code class="language-python" data-keep-tags="strong">    ...
+    def get_treelabel_predeco(self):
+        '''
+        '''
+        handler = PMFTreeViewCustomizationHandler()
+        return handler.get_treelabel_predeco(self)
+    
+    def get_treelabel_postdeco(self):
+        '''
+        '''
+        handler = PMFTreeViewCustomizationHandler()
+        return handler.get_treelabel_postdeco(self)</code></pre>
+
+<p>Per default, the prefix is empty unless the (root) object is modified, in which case an "*" is prefixed to the tree
+label. The suffix is actually always empty.</p>
+
+<p>The color of the tree label is of importance. This is set through the method:</p>
+<pre><code class="language-python" data-keep-tags="strong">    ...
+    # --------------------------------------------------------------------------
+    # tree view customization
+    # --------------------------------------------------------------------------
+    ...
+    def get_treelabel_color(self):
+        '''
+        '''
+        handler = PMFTreeViewCustomizationHandler()
+        return handler.get_treelabel_color(self)
+    
+    ...</code></pre>
+
+<p>Per default, the color is black, unless the (root) object is modified, in which case the color is green. Moreover,
+if the object has the attribute "Skip", then the color of the tree label will be blue.</p>
+
+<h5 id="L1955">Forbidding items of some classes to appears in the tree </h5>
+
+<p>In some case the user wish to not display object of some classes in the tree view. Two methods are provided for this
+purpose:</p>
+<pre><code class="language-python" data-keep-tags="strong">    @classmethod
+    def treeview_display_objectclass(cls, parent=None): ...
+    
+    def treeview_display_objet(self): ...</code></pre>
+    
+<p>When reading from a file, objects of the class will not be build at all in the tree</p>    
+    
+<h5 id="L1954">Forbidding items of some classes to be interactively created in the tree </h5>
+
+<pre><code class="language-python" data-keep-tags="strong">    @classmethod
+    def ctx_menu_enable_object_creation(cls, parent=None)</code></pre>
+
+<p>This method, returning "<code>True</code>" per default in the base class, can be overwritten in the
+&lt;class&gt;Super.py class, and return "<code>False</code>" instead of "<code>True</code>". As a consequence, the
+treeview context menu will not display the commands "<code>New Child</code>" or "<code>New Sibling</code>" for this
+class.</p>
+
+<h5 id="L1956">Forbidding items of some classes to be interactively deleted in the tree </h5>
+
+<p>In some case the user wish to not display object of some classes in the tree view. Two methods are provided for this
+purpose:</p>
+<pre><code class="language-python" data-keep-tags="strong">
+    def ctx_menu_enable_object_deletion(self)</code></pre>
+    
+<h5 id="L1957">Adding custom actions from the context menu </h5>
+
+<p>In some case the user add some extra commands in the context menu for given object (classes).</p>
+<pre><code class="language-python" data-keep-tags="strong"> 
+    def ctx_menu_custom_actions(self):</code></pre>
+ 
+  
+<h4 id="L2720">Formulars Customization</h4>
+
+<p>Inside a "super" class is defined a class object:</p>
+<pre><code class="language-python" data-keep-tags="strong">    formular = ...</code></pre>
+
+<p>It defines the items that are displayed in the formular. Of course this formular can be edited for your needs. You
+can </p>
+<ul>
+  <li>comment out some lines to hide the related item attributes</li>
+  <li>set the legend in the formular for a given attribute</li>
+  <li>set the type of control you wish for a given attributes (column "ui_type")</li>
+  <li>set the control properties (column "ui_props") - more on the properties later</li>
+</ul>
+
+<p>This way the formular layout will look quite simple: it is the classical "formular" layout. </p>
+
+<p>A second way to define formulars is through qt ui formulars, specified with:</p>
+<pre><code class="language-python" data-keep-tags="strong">    custom_formular = &lt;path to an ui formular&gt; </code></pre>
+
+<p>It is set per default to None, indicating that the formular is done with the "formular" defination above. If not
+None, then the ui file is considered.</p>
+
+<p></p>
+
+<p>Per default, the widgets in the formulars understand the restrictions on the objects attributes defined in the
+schema. Moreover, the user can overwrite these restrictions or define new restrictions/properties for the objects
+attributes in the formulars definitions. These restrictions/properties are defined in the last column of the formulars
+items (column &lt;ctrl_props&gt;):</p>
+<pre><code class="language-python" data-keep-tags="strong">class PARENTSuper(PMFObject):
+    '''
+    '''
+    formular = (
+        # &lt;legend&gt;                      , &lt;attribute&gt;                   , &lt;ctrl_type&gt;              , <strong>&lt;ctrl_props&gt;</strong>
+        ...
+    )</code></pre>
+
+<p>For all attributes, the default value is <strong>None</strong>. Possible restrictions/properties are specified in
+the form key:value in a (python) dictionary. For all formular items, 3 default "properties" are furnished:</p>
+<ul>
+  <li>"<strong>hide</strong>" : <code>True</code>/<code>False</code> (same as commenting out the formular item if
+    <code>True</code>)</li>
+  <li>"<strong>show</strong>" : <code>True</code>/<code>False</code> (same as commenting out the formular item if
+    <code>False)</code></li>
+  <li>"<strong>disabled</strong>" : <code>True</code>/<code>False</code></li>
+</ul>
+
+<p>Others properties are mainly specified for "compound" widgets, in order to possibly hide some of the widgets
+composing the compound widget.</p>
+
+<p>The restrictions, depending on the type of the widgets, follow exactly the possible restrictions given in the
+schema: </p>
+
+<h5 id="L20313">JSON Simple Types</h5>
+
+<table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2">
+  <col />
+  <col />
+  <col />
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 20%;">Schema Type </td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 20%;">ctrl_type</td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 60%;"><strong>restrictions/properties</strong></td>
+    </tr>
+    <tr>
+      <td>"type":"<strong>integer</strong>" </td>
+      <td>std_integer</td>
+      <td>"minimum", "maximum", "minimumExclusive", "maximumExclusive", "multipleOf"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_combobox/std_radiobtns</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>"type":"<strong>number</strong>" </td>
+      <td>std_float </td>
+      <td>"minimum", "maximum", "fraction_digits"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_combobox/std_radiobtns</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>"type":"<strong>boolean</strong>" </td>
+      <td>std_boolean</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_combobox/std_radiobtns</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>"type":"<strong>string</strong>" </td>
+      <td>std_lineedit</td>
+      <td>"pattern", "maximumLength"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_textedit</td>
+      <td>"text-highlight" (values: "python", "javascript", "cpp" or "xml")</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_combobox/std_radiobtns</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_browser</td>
+      <td>"btn_legend", "btn_image"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_dynamicchoice</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>"type":"<strong>array</strong>"</td>
+      <td>pmf_simplelist</td>
+      <td>"list_size", "hide_list_mgmt"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_checkboxlist</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_checkcombobox</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<p></p>
+
+<h5 id="L13071">XSD Simple Types</h5>
+
+<table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2">
+  <col />
+  <col />
+  <col />
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 20%;">Schema Type</td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 20%;">ctrl_type</td>
+      <td
+        style="vertical-align: top; background-color: rgb(204, 204, 204); width: 60%;"><strong>restrictions/properties</strong></td>
+    </tr>
+    <tr>
+      <td>xs:time</td>
+      <td>std_time</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>xs:date</td>
+      <td>std_date</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>xs:dateTime</td>
+      <td>std_datetime</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>xs:gDay</td>
+      <td>std_gDay</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>xs:gMonth</td>
+      <td>std_gMonth</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>xs:gMonthDay</td>
+      <td>std_gMonthDay</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>xs:gYear</td>
+      <td>std_gYear</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>xs:gYearMonth</td>
+      <td>std_gYearMonth</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>xs:duration</td>
+      <td>std_duration</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_duration</td>
+      <td>"view" - value string with pattern "(Y?)(M?)(D?)(H?)(m?)(S?)"</td>
+    </tr>
+    <tr>
+      <td>xs:boolean</td>
+      <td>std_checkbox</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>xs:integer</td>
+      <td>std_integer</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:byte</td>
+      <td>std_byte</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:short</td>
+      <td>std_short</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:int</td>
+      <td>std_int</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:long</td>
+      <td>std_long</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:unsignedByte</td>
+      <td>std_ubyte</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:unsignedShort</td>
+      <td>std_ushort</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:unsignedInt</td>
+      <td>std_uint</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:unsignedLong</td>
+      <td>std_ulong</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:decimal</td>
+      <td>std_decimal</td>
+      <td>"minimum", "maximum", "fraction_digits"</td>
+    </tr>
+    <tr>
+      <td>xs:double</td>
+      <td>std_double</td>
+      <td>"minimum", "maximum", "fraction_digits"</td>
+    </tr>
+    <tr>
+      <td>xs:float</td>
+      <td>std_float</td>
+      <td>"minimum", "maximum", "fraction_digits"</td>
+    </tr>
+    <tr>
+      <td>xs:positiveInteger</td>
+      <td>std_pos_integer</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:negativeInteger</td>
+      <td>std_neg_integer</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:nonPositiveInteger</td>
+      <td>std_non_pos_integer</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:nonNegativeInteger</td>
+      <td>std_non_neg_integer</td>
+      <td>"minimum", "maximum", "max_inclusive", "min_inclusive", "min_exclusive", "max_exclusive"</td>
+    </tr>
+    <tr>
+      <td>xs:list</td>
+      <td>std_checkboxlist</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_checkcombobox</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>xs:string</td>
+      <td>std_lineedit</td>
+      <td>"pattern"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_textedit</td>
+      <td>"text-highlight" (values: "python", "javascript", "cpp" or "xml")</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>std_label</td>
+      <td>"stylesheet", "fontsize", "bold"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_browser</td>
+      <td>"btn_legend", "btn_image"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_dynamicchoice</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<p></p>
+
+<h5 id="L2561">Complex Types in formulars</h5>
+
+<table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2">
+  <col />
+  <col />
+  <col />
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 20%;"></td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 20%;">ctrl_type</td>
+      <td
+        style="vertical-align: top; background-color: rgb(204, 204, 204); width: 60%;"><strong>restrictions/properties</strong></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_childformularview</td>
+      <td>"<strong>choices</strong>" (values: "comboxbox" or "radiobuttons")</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_childrentableview</td>
+      <td>"<strong>hide_mgmt_btn</strong>" (values: True or False), "<strong>minimum_width</strong>",
+        "<strong>maximum_width</strong>"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_singlechildrefview</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_childrenrefview</td>
+      <td>"<strong>hide_mgmt_btn</strong>" (values: True or False)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h5 id="L2632">Extra formular widgets</h5>
+
+<table style="text-align: left; width: 90%;" border="1" cellpadding="2" cellspacing="2">
+  <col />
+  <col />
+  <col />
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 20%;"></td>
+      <td style="vertical-align: top; background-color: rgb(204, 204, 204); width: 20%;">ctrl_type</td>
+      <td
+        style="vertical-align: top; background-color: rgb(204, 204, 204); width: 60%;"><strong>restrictions/properties</strong></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_titlebanner</td>
+      <td>"<strong>stylesheet</strong>", "<strong>maxheight</strong>", "<strong>minheight</strong>",
+        "<strong>fontsize</strong>", "<strong>bold</strong>"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_helpbanner</td>
+      <td>"<strong>stylesheet</strong>", "<strong>maxheight</strong>", "<strong>minheight</strong>",
+        "<strong>fontsize</strong>", "<strong>bold</strong>", "<strong>legend</strong>"</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_html_view</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_html_editor</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>pmf_graphicsview</td>
+      <td>NOT YET DONE</td>
+    </tr>
+  </tbody>
+</table>
+
+<p></p>
+
+<h5 id="L2786">Customization of formulars: custom attributes</h5>
+
+<p>"Customs attributes", i.e. attributes of objects that are not defined in the schema,
+can be defined in the form of standard python "properties" : </p>
+
+<pre><code class="language-python">    @property
+    def html_display(self):
+        '''
+        '''
+        html_data = '''<?xml version="1.0" encoding="UTF-8"?>...'''
+        
+        return html_data
+</code></pre>
+
+<p>This allows to display in the formular other things than the standard attributes values.
+For example, the user can define html data to be displayed in a html widget:
+</p>
+
+<pre><code class="language-python">    formular = (
+        (""                            , 'html_display'                , 'pmf_html_view'  , None), 
+    )
+</code></pre>
+
+<p>Here the formular specifies an item related to the custom attribute <strong>html_display</strong>.
+The 'value' of this attribute is evaluated thanks to python <strong>@property</strong> feature and displayed is the formular in a <strong>web engine view</strong> widget.</p>
+
+<p>For example here is the code to display an object in an read only HTML formular</p>
+
+<pre><code class="language-python">    @property
+    def html_display(self):
+        '''
+        '''
+        html_file = os.path.join(os.environ['PMF_MODELS'], "xml_basic", "html_formular", "BASICSFormular.html")
+           
+        fp = open(html_file)
+        html = fp.read()
+        fp.close() 
+        
+        return html
+</code></pre>
+
+<p>In this case, the html data was constructed from the generator.
+
+<p>In some case it can be important to specify the size of the HTML window in which the html data will be displayed. This in the case when displaying SVG graphics. To do so, the user can define in the custom class the method</p>
+
+<pre><code class="language-python">
+    def get_html_size_hint(self, attribute):
+        if attribute == 'html_display':
+            return (700, 800)
+</code></pre>
+
+<p>The method displaying the html data will look like</p>
+
+<pre><code class="language-python">    @property
+    def html_display(self):
+        '''
+        '''
+        html_data = '''<?xml version="1.0" encoding="UTF-8"?>
+&lt;svg xmlns="http://www.w3.org/2000/svg"  version="1.1" width="700" height="800"&gt;
+    &lt;title&gt;WebEngine Page&lt;/title&gt;
+    ...
+&lt;/svg&gt;'''
+
+        return html_data
+</code></pre>
+
+<p>Here the html data that is displayed is read-only.<p> 
+        
+<p>Below the formular specifies a formular item related to the custom attribute <strong>qt_scene</strong>.
+The 'value' of this attribute is evaluated thanks to python <strong>@property</strong> feature and displayed is the formular in a <strong>graphicsview</strong> widget.</p>
+
+<pre><code class="language-python">    @property
+    def qt_scene(self):
+        '''
+        '''
+        scene = QtGui.QtGraphicsScene()
+        ...
+        return scene
+
+
+    formular = (
+        # &lt;legend&gt;                     , &lt;attribute&gt;               , &lt;ctrl_type&gt;         , &lt;ctrl_props&gt;
+        (""                            , 'qt_scene'                , 'pmf_graphicsview'  , None), 
+        ...</code></pre>
+
+
+<p></p>
+
+
+<h5 id="L2787">Customization of formulars: title banner</h5>
+
+<p>It is possible to add in the formular setting a line of the form</p>
+<pre><code class="language-python" data-keep-tags="strong">    formular = (
+        # &lt;legend&gt;                     , &lt;attribute&gt;                   , &lt;ctrl_type&gt;          , &lt;ctrl_props&gt;
+        <strong>(""                        , "TITLEBANNER"             , "pmf_titlebanner"  , None),</strong>
+        ...</code></pre>
+
+<p></p>
+
+<p>so that a banner will appears in the formular, at the place where this formular item is specified. The look of the
+banner can be customized through the ui properties "<strong>stylesheet</strong>", "<strong>maxheight</strong>",
+"<strong>minheight</strong>", "<strong>fontsize</strong>", "<strong>bold</strong>" that can be specified in the
+formular item "ctrl_props".</p>
+
+<p>The banner displays the object's class name currently selected.</p>
+
+<h5 id="L2814">Customization of formulars: help banner</h5>
+
+<p>It is possible to add in the formular setting a line of the form</p>
+<pre><code class="language-python" data-keep-tags="strong">   formular = (
+        # &lt;legend&gt;                     , &lt;attribute&gt;                   , &lt;ctrl_type&gt;         , &lt;ctrl_props&gt; 
+        ...
+        <strong>(""                        , "HELPBANNER"              , "pmf_helpbanner"  , None),</strong></code></pre>
+
+<p></p>
+
+<p>so that a help banner will appears in the formular, at the place where this formular item is specified. The look of
+the help banner can be customized through the ui properties "<strong>stylesheet</strong>",
+"<strong>maxheight</strong>", "<strong>minheight</strong>", "<strong>fontsize</strong>", "<strong>bold</strong>",
+"<strong>legend</strong>" that can be specified in the formular item "ctrl_props".</p>
+
+<p>By clicking the banner, a HTML window pop-up and display the HTML document stored in the file specified in the
+attribute <code><strong>html_help</strong></code> of the super class.</p>
+<pre><code class="language-python" data-keep-tags="strong">class WINDOW(PMFObject):
+    '''
+    '''
+    formular = (
+        # &lt;legend&gt;                     , &lt;attribute&gt;                   , &lt;ctrl_type&gt;        , &lt;ctrl_props&gt; 
+        (""                            , "TITLEBANNER"                 , "pmf_labelbanner"  , None), 
+        
+        ...
+        
+        <strong>(""                        , "HELPBANNER"              , "pmf_helpbnanner"  , None),</strong> 
+    )
+            
+    # defining a custom formular (ui file)
+    custom_formular = os.path.join(os.environ['PMF_MODELS'], "mymodel", "forms", "WINDOW.ui")
+
+    # defining a tree icon
+    tree_icon = os.path.join(os.environ['PMF_MODELS'], "mymodel", "icons", "WINDOW.png")
+    ...
+    # html
+    <strong>html_help</strong> = os.path.join(os.environ['PMF_MODELS'], "mymodel", "html_help", "WINDOW.html")</code></pre>
+
+<p>When generating the custom classes with the pmfgen tool, option -d &lt;folder location&gt; can be specified and will
+generate "default" html files for each class.</p>
+
+<h5 id="L2815">Customization of formulars: notebook</h5>
+
+<p>It is possible to display the formular as a notebook of (sub)formulars, in the case
+there are a lot of attributes to display.</p>
+
+<p>For this, the user just has to define "sub-formulars" and a "notebook specification":</p>
+
+<pre><code class="language-python" data-keep-tags="strong">    formular = (
+        # &lt;legend&gt;                     , &lt;attribute&gt;                   , &lt;ctrl_type&gt;              , &lt;ctrl_props&gt; 
+        (""                            , "TITLEBANNER"                 , "pmf_titlebanner"        , None),
+        ('Title'                       , 'Title'                       , 'std_lineedit'           , None), 
+        ('Text'                        , 'Text'                        , 'std_lineedit'           , None), 
+        ('Assumption'                  , 'Assumption'                  , 'std_lineedit'           , None), 
+        ('Rationale'                   , 'Rationale'                   , 'std_lineedit'           , None), 
+        ('AdditionalInfo'              , 'AdditionalInfo'              , 'std_lineedit'           , None), 
+        ('References'                  , 'References'                  , 'std_lineedit'           , None), 
+        (""                            , "HELPBANNER"                  , "pmf_helpbanner"         , None),
+    )
+    
+    sub_formular1 = (
+        # &lt;legend&gt;                     , &lt;attribute&gt;                   , &lt;ctrl_type&gt;              , &lt;ctrl_props&gt; 
+        ('Title'                       , 'Title'                       , 'std_lineedit'           , None), 
+        ('Text'                        , 'Text'                        , 'std_lineedit'           , None), 
+        #('Assumption'                  , 'Assumption'                  , 'std_lineedit'           , None), 
+        #('Rationale'                   , 'Rationale'                   , 'std_lineedit'           , None), 
+        #('AdditionalInfo'              , 'AdditionalInfo'              , 'std_lineedit'           , None), 
+        #('References'                  , 'References'                  , 'std_lineedit'           , None), 
+        (""                            , "HELPBANNER"                  , "pmf_helpbanner"         , None),
+    )
+    
+    sub_formular2 = (
+        # &lt;legend&gt;                     , &lt;attribute&gt;                   , &lt;ctrl_type&gt;              , &lt;ctrl_props&gt; 
+        (""                            , "TITLEBANNER"                 , "pmf_titlebanner"        , None),
+        #('Title'                       , 'Title'                       , 'std_lineedit'           , None), 
+        #('Text'                        , 'Text'                        , 'std_lineedit'           , None), 
+        ('Assumption'                  , 'Assumption'                  , 'std_lineedit'           , None), 
+        ('Rationale'                   , 'Rationale'                   , 'std_lineedit'           , None), 
+        ('AdditionalInfo'              , 'AdditionalInfo'              , 'std_lineedit'           , None), 
+        ('References'                  , 'References'                  , 'std_lineedit'           , None), 
+        (""                            , "HELPBANNER"                  , "pmf_helpbanner"         , None),
+    )
+    
+    ntbk_formulars =  (
+       (sub_formular1, {'label':'sub_formular1', 'icon':os.path.join(os.environ['PMF_MODELS'], "project", "icons", "icon1.png")}),
+       (sub_formular2, {'label':'sub_formular1', 'icon':os.path.join(os.environ['PMF_MODELS'], "project", "icons", "icon2.png")}),
+    )</code></pre>
+    
+ <p>That's it.<p>
+ 
+ <p>Note that the initial "formular" has still to be defined.</p>
+ 
+ <p></p>
+
+
+<h4 id="L272011">Customization of items as last leaves of a tree (1)</h4>
+
+<p>If a class "<code>PARENT</code>" has a <strong>list of children</strong> of type "<code>CHILD</code>", these
+children" objects having no complex children but <strong>only simple attributes</strong>, it can be useful not to
+display this list of children in the tree, but inside a "table" inside the formular of their parent (of class
+"<code>"PARENT</code>")</p>
+
+<p>Clearly, the class "<code>CHILDSuper</code>" must overwrite the two methods</p>
+<ul>
+  <li><code>ctx_menu_enable_object_creation</code></li>
+  <li><code>treeview_display_objectclass</code></li>
+</ul>
+
+<p>so that they return "<strong>False</strong>". The "formular" of the parent is then augmented with a formular item of
+ctrl_type '<strong>pmf_childrentableview</strong>':</p>
+<pre><code class="language-python" data-keep-tags="strong">class PARENTSuper(PMFObject):
+    '''
+    '''
+    formular = (
+        #  &lt;legend&gt;         , &lt;attribute&gt;    , &lt;ctrl_type&gt;             , &lt;ctrl_props&gt;
+
+        ("NAME"             , "NAME"         , "std_lineedit"          , None),
+        ("SKIP"             , "SKIP"         , "std_boolean"           , None),
+        ("DESCRIPTION"      , "DESCRIPTION"  , "std_textedit"          , None),
+        # children object item
+        ("CHILDREN"         , "&lt;container&gt;"  , "<strong>pmf_childrentableview</strong>" , None),
+)</code></pre>
+
+<p>The attributes of the objects of class "<code>CHILD</code>" will by displayed in the table, but only for these which
+are displayed with the following widgets:</p>
+<ul>
+  <li>attributes with control type "std_label" as labels in the table</li>
+  <li>attributes with control type "std_checkbox" as checkboxes in the table</li>
+  <li>attributes with control type "std_choice" as comboboxes in the table</li>
+  <li>attributes with control type "std_integer" or similar as spinboxes in the table</li>
+  <li>attributes with control type "std_float" or similar as line edit in the table</li>
+  <li>attributes with control type "std_date" as date edit in the table</li>
+  <li>attributes with control type "std_datetime" as datetime edit in the table</li>
+  <li>attributes with control type "std_time" as time edit in the table</li>
+  <li>attributes with control type "std_checklist"/"std_checkcombobox" as check combobox edit in the table</li>
+  <li>attributes with control type "<strong>pmf_browser</strong>"</li>
+</ul>
+
+<p>Not supported are simple types which are displayed as "compound widgets":</p>
+<ul>
+  <li>simple type with widget of type "<strong>pmf_simplelist</strong>"</li>
+  <li>others</li>
+</ul>
+
+<h4 id="L13786">Customization of items as last leaves of a tree (2)</h4>
+
+<p>If a class "<code>PARENT</code>" has a <strong>scalar child</strong> of type "<code>CHILD</code>" named (i.e. with
+tag) , this child object <strong>beeing mandatory</strong> and having no complex children but <strong>only simple
+attributes</strong>, it can be useful <strong>not</strong> to display this child object object in the tree (with its
+own formular), but in the formular if its parent (of class "PARENT").</p>
+
+<p>Similarly to the case of a list a children as above, the class "<code>CHILDSuper</code>" must overwrite the two
+methods:</p>
+<ul>
+  <li><code>ctx_menu_enable_object_creation</code></li>
+  <li><code>treeview_display_objectclass</code></li>
+</ul>
+
+<p>so that they return "<strong>False</strong>". The "formular" of the child is then included in the parent's formular
+by specifying in the parent formular a formular item with attribute the name of the child and ctrl_type
+'<strong>pmf_childformularview</strong>':</p>
+<pre><code class="language-python" data-keep-tags="strong">class PARENTSuper(PMFObject):
+    '''
+    '''
+    formular = (
+        #  &lt;legend&gt;         , &lt;attribute&gt;    , &lt;ctrl_type&gt;             , &lt;ctrl_props&gt;
+
+        ("NAME"             , "NAME"         , "std_lineedit"          , None),
+        ("SKIP"             , "SKIP"         , "std_boolean"           , None),
+        ("DESCRIPTION"      , "DESCRIPTION"  , "std_textedit"          , None),
+        # child object item
+        ("CHILD"            , "CHILD"        , "<strong>pmf_childformularview</strong>" , None),
+)</code></pre>
+
+<h4 id="L13787">Customization of items as last leaves of a tree (3)</h4>
+
+<p>If a class "<code>PARENT</code>" has a <strong>scalar child</strong> from a "<strong>oneOf</strong>" specification
+(or for XML a <strong>xs:choice</strong> with <strong>maxOccurs="1"</strong>) - possible child classes beeing
+"<code>CHILD_1</code>", "<code>CHILD_2</code>", etc. - , this child object <strong>beeing mandatory</strong> and having
+no complex children but <strong>only simple attributes</strong>, it can be useful <strong>not</strong> to display this
+child object object in the tree (with its own formular), but in the formular if its parent (of class "PARENT"). This is
+of course similar to the previous case, but the child formular has to allow the user to switch between the possible
+"choices" of child type. This is performed through a radio buttons group or a combobox (see option
+"<strong>choices</strong>" for control type "<strong>pmf_childformularview</strong>") displaying all the possible
+choices of classes for the "oneOf" child.</p>
+
+<p>Similarly to the case of a list a children as above, the classes "<code>CHILD_1Super</code>",
+"<code>CHILD_2Super</code>", etc. must overwrite the two methods:</p>
+<ul>
+  <li><code>ctx_menu_enable_object_creation</code></li>
+  <li><code>treeview_display_objectclass</code></li>
+</ul>
+
+<p>so that they return "<strong>False</strong>". The "formular" of the child for the current child class is then
+included in the parent's formular by specifying in the parent formular a formular item with attribute the name of the
+child and ctrl_type '<strong>pmf_childformularview</strong>':</p>
+<pre><code class="language-python" data-keep-tags="strong">class PARENTSuper(PMFObject):
+    '''
+    '''
+    formular = (
+        #  &lt;legend&gt;         , &lt;attribute&gt;    , &lt;ctrl_type&gt;           , &lt;ctrl_props&gt;
+
+        ("NAME"             , "NAME"         , "std_lineedit"          , None),
+        ("SKIP"             , "SKIP"         , "std_boolean"           , None),
+        ("DESCRIPTION"      , "DESCRIPTION"  , "std_textedit"          , None),
+        # child object item
+        ("CHILD"            , "CHILD"        , "<strong>pmf_childformularview</strong>" , None),
+)</code></pre>
+
+<h4 id="L10917">Customization of formulars: UI formulars</h4>
+
+<p>It is possible to use user created "UI formulars" instead of the automatically generated formulars. These UI
+formulars integrate perfect in the application through the following rules:</p>
+<ul>
+  <li>the name of the widgets are of the form PMF_&lt;name of object attribute&gt; (all in uppercase)</li>
+  <li>the labels for the widgets are of the form PMF_CTRLLAB_&lt;name of the object attribute&gt; (all in
+  uppercase)</li>
+  <li>the widgets "derive" from the PMF widgets 
+    <ol>
+      <li>QLineEdit must be infact a "PMFLineEdit"</li>
+      <li>QTextEdit must be infact a "PMFTextEdit"</li>
+      <li>QSpinBox must be a "PMFSpinBox"</li>
+      <li>QDateTime must be a "PMFDateEdit"</li>
+      <li>QComboBox must be a "PMFComboBox"</li>
+      <li>for "composite" widgets, simply insert in the formular a "Widget" and replace with real PMF widget (eg
+        "PMFReferencesListView")</li>
+      <li>for "pmf_childformularview" for "sub formular" (displaying children formular), simply insert in the formular
+        a "Widget" and replace with real PMF Widget "PMFFormular", with name PMF_&lt;attribute&gt; (all upper case)
+        where "attribute" is the attribute found in the automatic formular for the specific formular item.</li>
+      <li>for "pmf_childformularview" "oneOf" style "sub formular" (displaying children formular), simply insert in the
+        formular a "Widget" and replace with real PMF Widget "PMFOneOfFormular", with name PMF_&lt;attribute&gt; (all
+        upper case) where "attribute" is the attribute found in the automatic formular for the specific formular
+      item.</li>
+      <li>For "pmf_childrentableview" formular items, (displaying children list in a list), simply insert in the
+        formular a "Widget" and replace with real PMF Widget "PMFChildrenTableView", with name PMF_&lt;attribute&gt;
+        (all upper case) where "attribute" is the attribute found in the automatic formular for the specific formular
+        item.</li>
+    </ol>
+  </li>
+</ul>
+
+<p>Note: in "DEMOS" folder, the <code>xml_reqtool</code> and <code>json_reqtool</code> examples make use of such UI
+formulars. See also <code>json_oneof</code> and <code>json_containers</code> for others examples.</p>
+
+<h4 id="L2782">Customization of References</h4>
+
+<p>The customization of references (if defined in the schema) is mandatory in order to handle them correctly. The main
+point is: where to select the objects that can act as reference. The default implementation in the generated super
+classes is: objects of a given class that can be referenced in an object are collected from the whole tree. The default
+implemetation is given in (taken frm the XML demo <code>"xml_reqtool"</code> for the class "Test") the following
+method:</p>
+<pre><code class="language-python" data-keep-tags="strong">    def get_selectables_objects_for_refs_in_container(self, container_name):
+        '''
+        '''
+        root = self.GetRootObj()
+        
+        res = []
+        
+        if container_name == 'RequirementRef':
+            for o in root.forward_iterator():
+                if o.GetClassName() == 'Requirement':
+                    res.append(o)
+                    
+        if container_name == 'DesignRef':
+            for o in root.forward_iterator():
+                if o.GetClassName() == 'Design':
+                    res.append(o)
+                    
+        if container_name == 'TestRef':
+            for o in root.forward_iterator():
+                if o.GetClassName() == 'Test':
+                    res.append(o)
+            
+        return res
+
+    def get_reference_representation(self, weak_parent):
+        '''
+        '''
+        return self.getTestId()</code></pre>
+
+<p></p>
+
+<p>The developper has first to look inside the generated module at the class "Test" and observe the names of the
+containers designed to contain references on Requirements, Designs and Tests. In this cases, these containers are named
+"<code>RequirementRef</code>", "<code>DesignRef</code>" and "<code>TestRef</code>". These names are the ones which are
+passed to the method "<code>get_selectables_objects_for_refs_in_container</code>". The developer can then refine the
+scope of the search for selectables objects.</p>
+
+<p>The second method "<code>get_reference_representation</code>" is used to display in the widget the object used as
+reference in the reference owner.</p>
+
+<h4 id="L2811">Choice of "selectable" objects for a reference</h4>
+<ul>
+  <li>a combo box for objects having max. 1 reference (control PMFSingleReferenceChoice.py)</li>
+  <li>a list for objects having possibly more than 1 reference (control PMFMultiReferencesListView.py)</li>
+</ul>
+
+<p>Opening the combo box, the list of possibles choice is displayed.</p>
+
+<p>For the PMFMultiReferencesListView, opening the dialog through the "ManageList" button show two list, one beeing the
+list of possibles choice, the other one the list of selected objects as references.</p>
+
+<p></p>
+
+<p>In both case, the list of "selectable" objects is calculated from the "Reference Owner" object through its method</p>
+<ul>
+  <li>"<strong>get_selectables_objects_for_refs_in_container</strong>" with argument the name of the attribute of the
+    calling object where the references are packed</li>
+</ul>
+
+<p>This method returns, of course, the list of selectables object for the parent object for the related attributes</p>
+
+<p>The method is also implemented in the base classes and returns an empty list</p>
+
+<p></p>
+
+<h2 id="L2839">Appendix</h2>
+
+<h3 id="L2441">PMF Framework Built-In classes</h3>
+
+<p>The list of built-in classes in the framework is:</p>
+
+<p>In the folder PMF:</p>
+<ul>
+  <li>PMFDisplayView.py</li>
+  <li>PMFObject.py</li>
+  <li>PMFObjectExceptions.py</li>
+  <li>PMFObjectLogger.py</li>
+  <li>PMFObjectNotification.py</li>
+  <li>PMFObjectObserver.py</li>
+  <li>PMFObjectReaderJSON.py</li>
+  <li>PMFObjectWriterJSON.py</li>
+  <li>PMFObjectReaderXML.py</li>
+  <li>PMFObjectWriterXML.py</li>
+  <li>PMFUndoRedoStack.py</li>
+  <li>PMFObjectValidator.py</li>
+</ul>
+
+<p>In the folder PMF/PMF_TREEVIEW:</p>
+<ul>
+  <li>PMFTreeView.py</li>
+  <li>PMFTreeViewCustomization.py</li>
+  <li>PMFTreeViewModel.py</li>
+  <li>PMFTreeViewNotificationHandler.py</li>
+  <li>PMFTreeViewRoot.py</li>
+</ul>
+
+<p>In the folder PMF/PMF_LOGGERVIEW:</p>
+<ul>
+  <li>PMFLoggerView.py</li>
+</ul>
+
+<p>In the folder PMF/PMF_FORMULARVIEW:</p>
+<ul>
+  <li>PMFBrowser.py</li>
+  <li>PMFCheckBox.py</li>
+  <li>PMFCheckListView.py</li>
+  <li>PMFChildItemsTableView.py</li>
+  <li>PMFComboBox.py</li>
+  <li>PMFDateEdit.py</li>
+  <li>PMFDateTimeEdit.py</li>
+  <li>PMFDurationEdit.py</li>
+  <li>PMFDurationEdit2.py</li>
+  <li>PMFDynamicChoice.py</li>
+  <li>PMFFloatEdit.py</li>
+  <li>PMFFormularView.py</li>
+  <li>PMFGraphicsView.py</li>
+  <li>PMFHelpBanner.py</li>
+  <li>PMFHtmlView.py</li>
+  <li>PMFHexBinaryEdit.py</li>
+  <li>PMFLabel.py</li>
+  <li>PMFLabelBanner.py</li>
+  <li>PMFLineEdit.py</li>
+  <li>PMFMultiCheckComboBox.py</li>
+  <li>PMFRadioButtons.py</li>
+  <li>PMFReferencesListView.py</li>
+  <li>PMFSimpleListView.py</li>
+  <li>PMFSingleReferenceChoice.py</li>
+  <li>PMFSpinBox.py</li>
+  <li>PMFTextEdit</li>
+  <li>PMFTimeEdit.py</li>
+  <li>PMFWidgetSetupManager.py</li>
+  <li>PySideSyntaxHighlighter.py</li>
+</ul>
+
+<p>The main built-in class is the class <strong>PMFObject</strong> in file <strong>PMFObject.py</strong>, the base
+class of all generated classes. </p>
+
+<h3 id="L957">Observers</h3>
+
+<p>Every action (edit/new/delete etc.) on a PMFobject generates a "<strong>notification</strong>" that is then handled
+by an "<strong>observer</strong>". The base class has the following "features":</p>
+<ul>
+  <li>observers to handle changes in the model. Built-in observers are (among others): 
+    <ul>
+      <li>tree view</li>
+      <li>display view</li>
+      <li>undo-redo</li>
+      <li>validator</li>
+    </ul>
+  </li>
+  <li>read write the model from/to XML/JSON files</li>
+</ul>
+
+<p></p>
+
+<h3 id="L28391">References declaration in XSDs</h3>
+
+<p>The following example shows how to implement the "reference" feature in XSDs. Let's start with an XML files defining
+"references". Later on, we show the related XSD with its special syntax.</p>
+
+<p>So we consider the following XML file: the root object owns 5 children, two of type <code>C1</code>, two of type
+<code>C2</code> and one of type <code>C3</code>. Moreover, the first object of type C1 has references on the two
+objects of type <code>C2</code>, while the second object of type <code>C1</code> has only 1 reference on an object of
+type <code>C2</code>. Finally, the object of type <code>C3</code> has a reference on the object of type <code>C2</code>
+with <code>Id=4</code> and reciproquely.</p>
+<pre><code class="language-xml" data-keep-tags="strong">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Root xmlns="http://mysite.com/myapp/pmf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://mysite.com/myapp/pmf Root.xsd"&gt;
+    &lt;C1&gt;
+        &lt;Label&gt;C1-a&lt;/Label&gt;
+        &lt;C2Ref&gt;a3&lt;/C2Ref&gt; <strong>&lt;!-- uni-directional reference on C2 object --&gt;</strong>
+        &lt;C2Ref&gt;a4&lt;/C2Ref&gt; <strong>&lt;!-- uni-directional reference on C2 object --&gt;</strong>
+    &lt;/C1&gt;
+    &lt;C1&gt;
+        &lt;Label&gt;C1-b&lt;/Label&gt;
+        &lt;C2Ref&gt;a4&lt;C2Ref&gt; <strong> &lt;!-- uni-directional reference on C2 object --&gt;</strong>
+    &lt;/C1&gt;
+    &lt;C2 <strong>Id="a3"</strong>&gt;
+        &lt;Label&gt;C2-a&lt;/Label&gt;
+    &lt;/C2&gt;
+    &lt;C2 <strong>Id="a4"</strong>&gt;
+        &lt;Label&gt;C2-b&lt;/Label&gt;
+        &lt;C3Ref&gt;a5&lt;C2Ref&gt; <strong>&lt;!-- bi-directional reference on C3 object --&gt;</strong>
+    &lt;/C2&gt;
+    &lt;C3 <strong>Id="a5"</strong>&gt;
+        &lt;Label&gt;C3&lt;/Label&gt;
+        &lt;C2Ref&gt;a4&lt;C2Ref&gt; <strong>&lt;!-- bi-directional reference on C2 object --&gt;</strong>
+    &lt;/C3&gt;
+&lt;/Root&gt;</code></pre>
+
+<p>Notice how all objects (but not those of type <code>C1</code>) have the attribute
+"<code><strong>Id</strong></code>". This is an "unique identifier" (<strong>UUID</strong>) and there can be only 1
+<strong>UUID</strong> per schema, in this XSD "<code><strong>Id</strong></code>".
+Notice how the references are "performed" through this <strong>UUID</strong>.</p>
+
+<p>Lets have a look how the related XSD for the XML could look like and how it achieves such "references":</p>
+<pre><code class="language-xml" data-keep-tags="strong">&lt;xs:complexType name="Root"&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element="C1" xs:type="C1" maxOccurs="unbounded" /&gt;
+        &lt;xs:element="C2" xs:type="C2" maxOccurs="unbounded" /&gt;
+        &lt;xs:element="C3" xs:type="C3" maxOccurs="unbounded" /&gt;
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name="C1"&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element="Label" xs:type="xs:string"&gt;
+        &lt;xs:element="C2Ref" xs:type="IdRef" <strong>pmf:reftype</strong>="C2" <strong>pmf:refattr</strong>="Id" <strong>pmf:backref</strong>="false" minOccurs="0" maxOccurs="unbounded"&gt;
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name="C2"&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element="Label" xs:type="xs:string" /&gt;
+        &lt;xs:element="C3Ref" xs:type="IdRef" <strong>pmf:reftype</strong>="C3" <strong>pmf:refattr</strong>="Id" <strong>pmf:backref</strong>="true" <strong>pmf:backelt</strong>="C2Ref" minOccurs="0" maxOccurs="1"/&gt;
+    &lt;/xs:sequence&gt;
+    &lt;xs:attribute name="Id" type="Id" use="required" /&gt; <strong>&lt;!-- must have such an attribute/element to be referenced --&gt;</strong>
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name="C3"&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element="Label" xs:type="xs:string" /&gt;
+        &lt;xs:element="C2Ref" xs:type="IdRef" <strong>pmf:reftype</strong>="C2" <strong>pmf:refattr</strong>="Id" <strong>pmf:backref</strong>="true" <strong>pmf:backelt</strong>="C3Ref" minOccurs="0" maxOccurs="1"/&gt;
+    &lt;/xs:sequence&gt;
+    &lt;xs:attribute name="Id" type="Id" use="required" /&gt; <strong>&lt;!-- must have such an attribute/element to be referenced --&gt;</strong>
+&lt;/xs:complexType&gt;
+
+<strong>&lt;!-- a "UUID" must be defined as a simple string type xs:string or better as xs:ID --&gt;</strong>
+&lt;xs:simpleType name="Id" <strong>pmf:autovalue</strong>="true"&gt;
+   &lt;xs:restriction base=xs:ID /&gt;
+&lt;/xs:simpleType&gt;
+&lt;xs:simpleType name="IdRef"&gt;
+   &lt;xs:restriction base=xs:IDREF /&gt;
+&lt;/xs:simpleType&gt;</code></pre>
+
+<p></p>
+
+<p>From this XSD, we observe that the references are indeed performed through the usage of "special" attribute (with
+property "<strong>autovalue</strong>").</p>
+
+<p>The attribute "<code><strong>Id</strong></code>" of type "<strong>xs:string</strong>" or "<strong>xs:ID</strong>" must be
+an unique identifer (UUID), must be "<strong>autogenerated</strong> and can be transparent to the
+user. Thus it is declared as <strong>pmf:autovalue="true"</strong> for this purpose.</p>
+
+<p>The mandatory/optional options when defining references are:</p>
+<ul>
+  <li><strong>pmf:reftype</strong> : the type (class) of the referenced object -<strong>mandatory</strong>-</li>
+  <li><strong>pmf:refattr</strong> : the attribute on which the reference on the object is performed
+    -<strong>mandatory</strong>-</li>
+  <li><strong>pmf:backref</strong> : "false" -the default- or "true" -<strong>optional</strong>-</li>
+  <li><strong>pmf:backelt</strong> : only in case of <strong>pmf:backref</strong>="true", then
+    -<strong>mandatory</strong>- the name of the related element in the related class</li>
+</ul>
+
+<p>An other way to define reference is if the referenced objects are defined as "attribute" in the referencing objects
+instead as "element" (in the following in C2 and C3). This is only possible when the related objects have a maxOccurs=1 on a reference type:</p>
+<pre><code class="language-xml" data-keep-tags="strong">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Root xmlns="http://mysite.com/myapp/pmf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://mysite.com/myapp/pmf Root.xsd"&gt;
+    &lt;C1&gt;
+        &lt;Label&gt;C1-a&lt;/Label&gt;
+        &lt;C2Ref&gt;a3&lt;/C2Ref&gt; <strong>&lt;!-- uni-directional reference on C2 object / same as before as element --&gt;</strong>
+        &lt;C2Ref&gt;a4&lt;/C2Ref&gt; <strong>&lt;!-- uni-directional reference on C2 object / same as before as element --&gt;</strong>
+    &lt;/C1&gt;
+    &lt;C1&gt;
+        &lt;Label&gt;C1-b&lt;/Label&gt;
+        &lt;C2Ref&gt;a4&lt;C2Ref&gt; <strong> &lt;!-- uni-directional reference on C2 object / same as before as element --&gt;</strong>
+    &lt;/C1&gt;
+    &lt;C2 <strong>Id="a3"</strong>&gt;
+        &lt;Label&gt;C2-a&lt;/Label&gt;
+    &lt;/C2&gt;
+    &lt;C2 <strong>Id="a4"</strong> <strong>C3Ref="a5"</strong>&gt;     <strong> &lt;!-- ref now defined as attribute --&gt;</strong>
+        &lt;Label&gt;C2-b&lt;/Label&gt;
+    &lt;/C2&gt;
+    &lt;C3 <strong>Id="a5"</strong> <strong>C2Ref="a4"</strong> &gt;    <strong> &lt;!-- ref now defined as attribute --&gt;</strong>
+        &lt;Label&gt;C3&lt;/Label&gt;
+    &lt;/C3&gt;
+&lt;/Root&gt;</code></pre>
+
+<p>then the XSD is defined slightly differenty, like the following:</p>
+<pre><code class="language-xml" data-keep-tags="strong">&lt;xs:complexType name=Root&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element="C1" xs:type=C1 maxOccurs=unbounded /&gt;
+        &lt;xs:element="C2" xs:type=C2 maxOccurs=unbounded /&gt;
+        &lt;xs:element="C3" xs:type=C3 maxOccurs=unbounded /&gt;
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name=C2&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element="Label" xs:type=xs:string&gt;
+        &lt;!-- &lt;xs:element="C3Ref" xs:type="IdRef" <strong>pmf:reftype</strong>="C3" <strong>pmf:refattr</strong>="Id" <strong>pmf:backref</strong>="true" <strong>pmf:backelt</strong>="C2Ref" minOccurs="0" maxOccurs="1"&gt;  NOT AS ELEMENT --&gt;
+    &lt;/xs:sequence&gt;
+    &lt;xs:attribute name="Id" type="Id" use="required" /&gt; <strong>&lt;!-- must have such an attribute/element to be referenced     BUT AS ATTRIBUTE --&gt;</strong>
+    &lt;xs:attribute name="C3Ref" type="IdRef" <strong>pmf:reftype</strong>="C3" <strong>pmf:refattr</strong>="Id" <strong>pmf:backref</strong>="true" /&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name="C3"&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element="Label" xs:type="xs:string" /&gt;
+        &lt;!-- &lt;xs:element="C2Ref" xs:type="IdRef" <strong>pmf:reftype</strong>="C2" <strong>pmf:refattr</strong>="Id" <strong>pmf:backref</strong>="true" <strong>pmf:backelt</strong>="C3Ref" minOccurs="0" maxOccurs="1"/&gt; NOT AS ELEMENT --&gt;
+    &lt;/xs:sequence&gt;
+    &lt;xs:attribute name="Id" type="Id" use="required" /&gt; <strong>&lt;!-- must have such an attribute/element to be referenced --&gt;</strong>
+    &lt;xs:attribute name="C2Ref" type="IdRef" <strong>pmf:reftype</strong>="C2" <strong>pmf:refattr</strong>="Id" <strong>pmf:backref</strong>="true" /&gt;
+&lt;/xs:complexType&gt;
+
+...
+
+</code></pre>
+
+<p>The UUID should be completely transparent to the user: the user can hide it in the object formular;
+in any case it should not be editable in the formular. This is achieved in the custom super classes:</p>
+
+<pre><code class="language-python" data-keep-tags="strong">
+class C2(PMFObject):
+    '''
+    '''
+    formular = PMFObject.make_formular(
+        # &lt;legend&gt;                      , &lt;attribute&gt;                   , &lt;ctrl_type&gt;              , &lt;ctrl_props&gt;
+        (""                            , "TITLEBANNER"                 , "pmf_titlebanner"        , None),
+        #('Id'                          , 'Id'                          , 'std_lineedit'           , {'disabled': True, 'show': False}), 
+        ('Label'                       , 'Label'                        , 'std_lineedit'           , None),
+        ... 
+</code></pre>
+
+<p>As the attribute <strong>Id</strong> is marked as <strong>pmf:autovalue</strong> in the XSD, the <strong>Id</strong> is already commented in the formular.</p>
+
+<p>An other case is where the UUID is not transparent to the user, i.e. the user may want to edit this UUID.
+In this case, the user still has to declare in the xsd the property <strong>pmf:autovalue="true"</strong>,
+but he definitively should neither hide or disable the item in the class formular.<p>
+<p>When editing this UUID, special handling must be performed by the user to avoid defining syntaxly wrong 
+or duplicated UUID. An example of such handling can be found in the demo xscxml.</p>
+
+<h3 id="L3047">References declaration in JSON Schemas</h3>
+
+<p>As in XML, references in JSON files are achieved through the use of UUIDs. Here the UUID is named
+"<strong>UUID</strong>":</p>
+<pre><code class="language-json" data-keep-tags="strong">{
+   "BASIC": 
+   [
+      {  "<strong>UUID</strong>": "<strong>11</strong>", "LABEL": "b-1"  },  // object of type "BASIC" that will be referenced elsewhere
+      {  "<strong>UUID</strong>": "<strong>12</strong>", "LABEL": "b-2"  },  // object of type "BASIC" that will be referenced elsewhere
+      {  "<strong>UUID</strong>": "<strong>13</strong>", "LABEL": "b-3"  }   // object of type "BASIC" that will be referenced elsewhere
+   ],
+
+   "SINGLEREF_OWNER": 
+   [
+      { "UUID": "21", "LABEL": "o-1", "SINGLE_REFERENCE": "<strong>13</strong>" }, // objects of type "SINGLEREF_OWNER" contain zero or one reference of "BASIC" objects, in attribute "SINGLE_REFERENCE"
+      { "UUID": "22", "LABEL": "o-2"},
+      { "UUID": "23", "LABEL": "o-3", "SINGLE_REFERENCE": "<strong>12</strong>" }
+   ],
+
+   "MULTIREFS_OWNER": 
+   
+      { "UUID": "31", "LABEL": "m-1", "ARRAY_REFERENCES": [ "<strong>12</strong>" , "<strong>13</strong>" ] },  // objects of type "MULTIREFS_OWNER" contain an array of references of "BASIC" objects, in attribute "ARRAY_REFERENCES"
+      { "UUID": "32", "LABEL": "m-2", "ARRAY_REFERENCES": [ "<strong>13</strong>" , "<strong>11</strong>" ] }
+   ]
+}</code></pre>
+
+<p>The schema looks like</p>
+<pre><code class="language-json" data-keep-tags="strong">{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "JSONREFS",
+    "$comment": "##classname#JSONREFS##",
+    "type": "object",
+    "properties": {
+
+        "BASIC" : { "type":"array" , "items": 
+            { "type" : "object",
+                "properties": {
+                    "UUID"  : { "$ref": "#/definitions/UUID" },
+                    "LABEL" : { "type": "string"}
+                }
+            }
+        },
+        
+        "SINGLEREF_OWNER" : { "type":"array", "items" :
+            { "type":"object",
+                "properties": {
+                    "UUID"  : { "$ref": "#/definitions/UUID" },
+                    "LABEL" : { "type": "string"} ,
+                    "SINGLE_REFERENCE" : { "$ref": "#/definitions/UUID", "<strong>$comment</strong>": "<strong>##ref#UUID#BASIC##</strong>"}
+                }
+            }
+        },
+        
+        "MULTIREFS_OWNER" : { "type":"array", "items" :
+            { "type":"object",
+                "properties": {
+                    "UUID"  : { "$ref": "#/definitions/UUID" },
+                    "LABEL" : { "type": "string"} ,
+                    "ARRAY_REFERENCES" : { "type":"array", "items": { "$ref": "#/definitions/UUID", "<strong>$comment</strong>": "<strong>##ref#UUID#BASIC##</strong>"}}
+                }
+            }
+        },
+
+        "BIDIRREF_OBJECT1" : { "type":"object",
+            "properties": {
+                "UUID"  : { "$ref": "#/definitions/UUID"},
+                "LABEL" : { "type": "string"} ,
+                "REF_OBJECT1" : { "$ref": "#/definitions/UUID", "$comment": "<strong>##biref#UUID#BIDIRREF_OBJECT2.REF_OBJECT1##</strong> a ref on a BIDIRREF_OBJECT2, inverse ref is set in BIDIRREF_OBJECT2's REF_OBJECT1 attribute" },
+                "REF_OBJECT2" : { "$ref": "#/definitions/UUID", "$comment": "<strong>##biref#UUID#BIDIRREF_OBJECT2.REF_OBJECT2##</strong> a ref on a BIDIRREF_OBJECT2, inverse ref is set in BIDIRREF_OBJECT2's REF_OBJECT2 attribute" }
+            }
+        },
+         
+        "BIDIRREF_OBJECT2" : { "type":"object",
+            "properties": {
+                "UUID"  : { "$ref": "#/definitions/UUID"},
+                "LABEL" : { "type": "string"} ,
+                "REF_OBJECT1" : { "$ref": "#/definitions/UUID", "$comment": "<strong>##biref#UUID#BIDIRREF_OBJECT1.REF_OBJECT1##</strong> a ref on a BIDIRREF_OBJECT1, inverse ref is set in BIDIRREF_OBJECT1's REF_OBJECT1 attribute" },
+                "REF_OBJECT2" : { "$ref": "#/definitions/UUID", "$comment": "<strong>##biref#UUID#BIDIRREF_OBJECT1.REF_OBJECT2##</strong> a ref on a BIDIRREF_OBJECT1, inverse ref is set in BIDIRREF_OBJECT1's REF_OBJECT2 attribute" }
+            }
+        },
+    },
+
+    "definitions": {
+        "UUID" :{ "type": "string" , "<strong>$comment</strong>": "<strong>##auto##</strong>"}
+    }
+}</code></pre>
+
+<p>Because JSON schemas do not allow custom "tags" (as in XSDs), the indications that <strong>UUID</strong> is an UUID
+is done through the <strong>$comment</strong> property with the directive "<strong>##auto##</strong>". The
+<strong>tags</strong> "SINGLE_REFERENCE" and "ARRAY_REFERENCE" will define the references through the UUID. The
+elements must specify on which real class the references are (here on type "BASIC" and its attribute "UUID" ) and this
+is also performed through it <strong>$comment</strong> property <strong></strong>directive
+<strong>##ref#&lt;attr&gt;#&lt;class&gt;##</strong>.</p>
+
+<p></p>
+
+<p>In case of bi-directional references, the directive is "<strong>##biref#&lt;uuid&gt;#&lt;class&gt;.&lt;attr&gt;##</strong>"
+where <strong>&lt;class&gt;</strong> is the name of the class being references and <strong>&lt;attr&gt;</strong> the
+name of the attribute in the class that own the back reference.</p>
+
+<h3>User defined UUIDs</h3>
+
+<p>When working with references, UUID are necessary. The easiest way to deal with UUID is to let PMF generate them, and let
+them be user transparent, i.e. the user can hide them in the formulars and does not need to edit them. Uniqueness is in this 
+case always assured.</p>
+
+<p>But there are many use case where the UUIDs have to be editable. The UUID may be a human-readable string that may be set
+by the user. As example, references are performed through the "label" of the objects, and those are editable by the user.</p>
+
+<p>In this case, the editor shall help the user to ensure that no UUID (label) is duplicated. Moreover, at object creation,
+suitable UUIDs (labels) shall be set.</p>
+
+<p>To fulfill these 2 requirements, following is set at the disposition of the user:</p>
+<ul>
+<li><strong>at object creation:</strong> after having created a new object, its UUID is not yet "known", as the object has
+not yet been attached to its possible parent. But knowing its future parent or even the root, it is possible
+to assign the object a valid UUID. The user can use the method <code>"post_init"</code> to achieve this.
+The list (dictionary of all UUIDs is kept in the root object in the <code>"uuid_map"</code>  structure).</li>
+<li><strong>at object editing:</strong> a widget type <code>"pmf_uuidedit"</code> is furnished that ensure at edition
+in  a formular that the edited UUID is not already used.</li>
+</ul>
+
+<h3>Restriction on UUIDs</h3>
+
+<p>Actually it is only possible to have 1 attribute name as UUID, auto-generated or user-editable.</p>
+
+<p>This means that a good choice of UUID attribute may be <code>"Id"</code> or <code>"ID"</code> in all
+the complex types of the schema that need to have such an attribute in order to be referencables.</p>
+
+<p>In case of human-readable, editable UUID, the restriction may play a larger role. For example, in a complex type
+that needs to be referenced, the attribute may be <code>name</code> for example. But it is not possible to have
+then an other complex type which also needs to be referenced with the attribure <code>label</code> as UUID key.
+It must be attribute <code>name</code> again.</p>
+
+<p>Moreover, uniques ids are "global". PMF does not support "scoped" UUIDs.</p>
+
+<h2 id="L3048">File Splitting</h2>
+
+<p>It is possible to define the model so that when reading/writing the data, the data is splitted among several files.
+The specification how the model is serialized among several files is done through the XSD /JSON schema. Two examples
+are given:</p>
+<ul>
+  <li>json_reqtool_file_splitting</li>
+  <li>xml_reqtool_file_splitting</li>
+</ul>
+
+<p>The user is invited to carefully study the relative schemas. The key point is that an <strong>extra
+structure</strong> named <strong>"IncludedDataInfo"</strong> (or something equivalent) is defined to allow 
+each file (starting from the "root" one) to specify which files are "included" inside itself.</p>
+
+<p>Such an <strong>IncludedDataInfo</strong> structure contains a "<strong>DataType</strong>" which can be either
+"<strong>FILE</strong>" or "<strong>FOLDER_AND_FILE</strong>":</p>
+<ul>
+  <li><strong>FILE</strong>: the dependent data is serialized as a simple file, in the <strong>same folder</strong> as the "parent"
+  file.</li>
+  <li><strong>FOLDER_AND_FILE</strong>: the dependent data is serialized as as a simple file, in a <strong>given subfolder
+  </strong> of the parent folder.</li>
+</ul>
+
+<p>Names for files/subfolders depend of the data being serialized.</p>
+
+<p>The <strong>IncludedDataInfo</strong> structure also contains a "<strong>DataSpecification</strong>" which specify
+the path of the included data relative to the parent data:</p>
+<ul>
+  <li><strong>FILE</strong>: DataSpecification is of the form <strong>&lt;file-spec&gt;</strong>, a file name.</li>
+  <li><strong>FOLDER_AND_FILE</strong>: DataSpecification is of the form <strong>&lt;folder-spec&gt;/&lt;file-spec&gt;</strong>,
+   a folder name and a file name.</li>
+</ul>
+
+<p>For the "<strong>FILE</strong>" datatype, the file name is deducted from the included data, more precisely, is the value
+of a data attribute. Thus this attribute has to be specified in the schema. This is done by defining a special
+annotation on the attribute in the schema (see later).</p>
+
+<p>For the "<strong>FOLDER_AND_FILE</strong>" datatype, the folder name is deducted from the included data, more precisely,
+is the value of a data attribute. Thus this attribute has to be specified in the schema. This is done by defining a special
+annotation on the attribute in the schema (see later). On the other side, the file spec file name is also specified in the schema,
+but is <strong>fixed</strong>.</p>
+
+<p></p>
+
+<h3>Example</h3>
+
+<p>We define a model of a "Requirement Tool" application. The model has 2 main sections, "Requirements" and "Tests".
+As we do not want to mix them inside a single huge file, we split them. These 2 sections are called "books".
+Each book contains "chapters", and each chapter is a file on is own in order to keep things modular. Finally,
+a requirement chapter contains requirements, each requirement is also a single file on its own , again to keep things well
+separated. The same applies for the Tests.</p>
+
+<p>So the model, the xsd schema or the json schema, has to specify these splittings.</p>
+
+<p>In the "reqtool" example, books and chapters are defined as "<strong>FOLDER_AND_FILE</strong>", while requirements
+and tests as "<strong>FILE</strong>" only.</p>
+
+<p>The "root" file "xml_reqtool_file_splitting.xml" defines 2 "books" (requirements and tests), the books define
+"chapters" and so on. The file hierarchy look like:</p>
+<pre><span style="font-size: 10pt">|-- xml_reqtool_file_splitting.xml
+|-- requirements
+|   |-- CH-1
+|   |   |-- R_PMF_0001.xml
+|   |   |-- R_PMF_0002.xml
+|   |   |-- R_PMF_0003.xml
+|   |   |-- R_PMF_0004.xml
+|   |   `-- chapterInfo.xml
+|   |-- CH-2
+|   |   |-- R_PMF_0001.xml
+|   |   `-- chapterInfo.xml
+|   `-- bookInfo.xml
+|-- tests
+|   |-- CH-1
+|   |   |-- T_PMF_0001.xml
+|   |   |-- T_PMF_0002.xml
+|   |   `-- chapterInfo.xml
+|   `-- bookInfo.xml</span></pre>
+
+<p>First, let see how the single files look like. Then the schema with its special annotations will be explained.</p>
+ 
+<p>The root file "<strong>xml_reqtool_file_splitting.xml</strong>" includes 2 books and looks like:</p>
+<pre><code class="language-xml" data-keep-tags="strong">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Project xmlns="http://www.pexj.com/pmf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.pexj.com/pmf xml_reqtool_file_splitting.xsd"&gt;
+    &lt;ProjectNumber&gt;1&lt;/ProjectNumber&gt;
+    &lt;Customer&gt;xam&lt;/Customer&gt;
+    &lt;Classification&gt;ultra-mega-confidential&lt;/Classification&gt;
+    &lt;Title&gt;PMF&lt;/Title&gt;
+    &lt;Description&gt;&lt;/Description&gt;
+    &lt;InternalDistribution&gt;xam&lt;/InternalDistribution&gt;
+    &lt;ExternalDistribution&gt;xam&lt;/ExternalDistribution&gt;
+    &lt;Acronyms&gt;&lt;/Acronyms&gt;
+    &lt;RefDocs&gt;&lt;/RefDocs&gt;
+    &lt;<strong>IncludeRequirementBook</strong> DataSpecification="<strong>requirements/bookInfo.xml</strong>" DataType="<strong>FOLDER_AND_FILE</strong>" /&gt;
+    &lt;<strong>IncludeTestBook</strong> DataSpecification="<strong>tests/bookInfo.xml</strong>" DataType="<strong>FOLDER_AND_FILE</strong>" /&gt;
+&lt;/Project&gt;</code></pre>
+
+<p>We see that the references to the 2 books (the name of their file) are specified in <strong>DataSpecification</strong>
+and are, yes, located in the folders <strong>requirements</strong> and <strong>tests</strong>.</p>
+
+<p>Similarly, the requirement book (file "bookInfo.xml" in folder <strong>requirements</strong>) includes 2 chapters, and thus look like:</p>
+<pre><code class="language-xml" data-keep-tags="strong">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;RequirementBook xmlns="http://www.pexj.com/pmf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                    xsi:schemaLocation="http://www.pexj.com/pmf xml_reqtool_file_splitting.xsd"&gt;
+    &lt;BookTitle&gt;<strong>requirements</strong>&lt;/BookTitle&gt;
+    &lt;BookText&gt;&lt;/BookText&gt;
+    &lt;BookHistory&gt;&lt;/BookHistory&gt;
+    &lt;<strong>IncludeRequirementChapter</strong> DataSpecification="<strong>CH-1/chapterInfo.xml</strong>" DataType="<strong>FOLDER_AND_FILE</strong>" /&gt;
+    &lt;<strong>IncludeRequirementChapter</strong> DataSpecification="<strong>CH-2/chapterInfo.xml</strong>" DataType="<strong>FOLDER_AND_FILE</strong>" /&gt;
+&lt;/RequirementBook&gt;</code></pre>
+
+<p>We see that the <strong>BookTitle</strong> value defines the folder where the book lives - here <strong>requirements</strong>
+</p>
+<p>Should the user rename the book (for example in <strong>"reqs"</strong>), 
+then at save the folder <strong>requirements</strong> will be lost, but fortunately a new folder <strong>reqs</strong> will be created
+containing all its children.</p>
+
+<p>The first chapter (file "chapterInfo.xml" inside folder "CH-1") looks like:</p>
+<pre><code class="language-xml" data-keep-tags="strong">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;RequirementChapter xmlns="http://www.pexj.com/pmf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                       xsi:schemaLocation="http://www.pexj.com/pmf xml_reqtool_file_splitting.xsd"&gt;
+    &lt;ChapterTitle&gt;<strong>CH-1</strong>&lt;/ChapterTitle&gt;
+    &lt;ChapterText&gt;This is the requirement chapter text...&lt;/ChapterText&gt;
+    &lt;<strong>IncludeRequirement</strong> DataSpecification="<strong>R_PMF_0001.xml</strong>" DataType="<strong>FILE</strong>" /&gt;
+    &lt;<strong>IncludeRequirement</strong> DataSpecification="<strong>R_PMF_0002.xml</strong>" DataType="<strong>FILE</strong>" /&gt;
+    &lt;<strong>IncludeRequirement</strong> DataSpecification="<strong>R_PMF_0003.xml</strong>" DataType="<strong>FILE</strong>" /&gt;
+    &lt;<strong>IncludeRequirement</strong> DataSpecification="<strong>R_PMF_0004.xml</strong>" DataType="<strong>FILE</strong>" /&gt;
+&lt;/RequirementChapter&gt;</code></pre>
+
+<p>while the second chapter (file "chapterInfo.xml" inside folder "CH-2") looks like:</p>
+<pre><code class="language-xml" data-keep-tags="strong">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;RequirementChapter xmlns="http://www.pexj.com/pmf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                       xsi:schemaLocation="http://www.pexj.com/pmf xml_reqtool_file_splitting.xsd"&gt;
+    &lt;ChapterTitle&gt;<strong>CH-2</strong>&lt;/ChapterTitle&gt;
+    &lt;ChapterText&gt;This is the requirement chapter text...&lt;/ChapterText&gt;
+    &lt;<strong>IncludeRequirement</strong> DataSpecification="<strong>R_PMF_0001.xml</strong>" DataType="<strong>FILE</strong>" /&gt;
+&lt;/RequirementChapter&gt;</code></pre>
+
+<p>These two requirement files have the same name, but is is OK because they are in different folders.</p>
+
+<p>The file "R_PMF_0001.xml" in folder "CH-1" looks like:</p>
+<pre><code class="language-xml" data-keep-tags="strong">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Requirement xmlns="http://www.pexj.com/pmf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://www.pexj.com/pmf xml_reqtool_file_splitting.xsd"&gt;
+  &lt;RequirementId&gt;<strong>R_PMF_0001</strong>&lt;/RequirementId&gt;
+  ...
+&lt;/Requirement&gt;</code></pre>
+
+
+<p>Here the <strong>RequirementId</strong> attribute is responsible for the name of the requirement file,
+and can of course be changed/edited</p>
+
+<p>The special roles of these attributes (responsible for the folder/file names) are <strong>configurable</strong> in
+the related schema.</p>
+
+<p>The XSD schema look like:</p>
+<pre><code class="language-xml" data-keep-tags="strong">&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />&lt;xs:schema xmlns="http://www.pexj.com/pmf" xmlns:pmf="http://www.pexj.com/pmf" xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+                   targetNamespace="http://www.pexj.com/pmf" elementFormDefault="qualified" attributeFormDefault="unqualified"&gt;
+
+&lt;xs:element name="Project" type="Project" /&gt;
+
+&lt;xs:complexType name="IncludedDataInfo"&gt;
+  &lt;xs:attribute name=<strong>"DataSpecification"</strong> type="DataSpecification" use="required"/&gt;
+  &lt;xs:attribute name=<strong>"DataType"</strong> type="DataType" use="required"/&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name="Project"&gt;
+  &lt;xs:sequence&gt;
+  ...
+  &lt;xs:element name="IncludeRequirementBook" type="IncludedDataInfo" <strong>pmf:inctype</strong>="RequirementBook" minOccurs="1" maxOccurs="1"/&gt;  &lt;!-- the type of the 'real' structure is specified --&gt;
+  &lt;xs:element name="IncludeTestBook" type="IncludedDataInfo" <strong>pmf:inctype</strong>="TestBook" minOccurs="1" maxOccurs="1"/&gt;  &lt;!-- the type of the 'real' structure is specified --&gt;
+  &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;!-- base class for the books --&gt;
+
+&lt;xs:complexType name="Book" pmf:datatype=<strong>"FOLDER_AND_FILE"</strong> pmf:folderspec=<strong>"BookTitle"</strong> pmf:filespec=<strong>"bookInfo"</strong>&gt;
+  &lt;xs:sequence&gt;
+    &lt;xs:element name=<strong>"BookTitle"</strong> type="BookTitle"/&gt;
+    &lt;xs:element name="BookText" type="BookText"/&gt;
+    &lt;xs:element name="BookHistory" type="BookHistory"/&gt;
+  &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;!-- base class for the chapters --&gt;
+
+&lt;xs:complexType name="Chapter" pmf:datatype=<strong>"FOLDER_AND_FILE"</strong> pmf:folderspec=<strong>"ChapterTitle"</strong> pmf:filespec=<strong>"chapterInfo"</strong>&gt;
+  &lt;xs:sequence&gt;
+    &lt;xs:element name=<strong>"ChapterTitle"</strong> type="ChapterTitle"/&gt;
+    &lt;xs:element name="ChapterText" type="ChapterText"/&gt;
+  &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;!-- real classes for the books --&gt;
+
+&lt;xs:complexType name="RequirementBook"&gt;
+  &lt;xs:complexContent&gt;
+  &lt;xs:extension base="Book"&gt;
+    &lt;xs:sequence&gt;
+      &lt;xs:element name="IncludeRequirementChapter" type="IncludedDataInfo" <strong>pmf:inctype="RequirementChapter"</strong> minOccurs="0" maxOccurs="unbounded"/&gt;
+    &lt;/xs:sequence&gt;
+  &lt;/xs:extension&gt;
+  &lt;/xs:complexContent&gt;
+&lt;/xs:complexType&gt;
+&lt;xs:complexType name="TestBook"&gt;
+  &lt;xs:complexContent&gt;
+  &lt;xs:extension base="Book"&gt;
+    &lt;xs:sequence&gt;
+      &lt;xs:element name="IncludeTestChapter" type="IncludedDataInfo" <strong>pmf:inctype="TestChapter"</strong> minOccurs="0" maxOccurs="unbounded"/&gt;
+    &lt;/xs:sequence&gt;
+  &lt;/xs:extension&gt;
+  &lt;/xs:complexContent&gt;
+&lt;/xs:complexType&gt;
+
+&lt;!-- real classes for the chapters --&gt;
+
+&lt;xs:complexType name="RequirementChapter"&gt;
+  &lt;xs:complexContent&gt;
+  &lt;xs:extension base="Chapter"&gt;
+    &lt;xs:choice minOccurs="0" maxOccurs="unbounded"&gt;
+      &lt;xs:element name="IncludeRequirementChapter" type="IncludedDataInfo" <strong>pmf:inctype</strong>="RequirementChapter" minOccurs="0" maxOccurs="unbounded"/&gt; 
+      &lt;xs:element name="IncludeRequirement" type="IncludedDataInfo" <strong>pmf:inctype</strong>="Requirement" minOccurs="0" maxOccurs="unbounded"/&gt;
+    &lt;/xs:choice&gt;
+  &lt;/xs:extension&gt;
+  &lt;/xs:complexContent&gt;
+&lt;/xs:complexType&gt;
+&lt;xs:complexType name="TestChapter"&gt;
+  &lt;xs:complexContent&gt;
+  &lt;xs:extension base="Chapter"&gt;
+    &lt;xs:choice minOccurs="0" maxOccurs="unbounded"&gt;
+      &lt;xs:element name="IncludeTestChapter" type="IncludedDataInfo" <strong>pmf:inctype</strong>="TestChapter" minOccurs="0" maxOccurs="unbounded"/&gt; 
+      &lt;xs:element name="IncludeTest" type="IncludedDataInfo" <strong>pmf:inctype</strong>="Test" minOccurs="0" maxOccurs="unbounded"/&gt;
+    &lt;/xs:choice&gt;
+  &lt;/xs:extension&gt;
+  &lt;/xs:complexContent&gt;
+&lt;/xs:complexType&gt;
+
+&lt;!-- finally the Requirements and Tests structures --&gt;
+
+&lt;xs:complexType name="Requirement" pmf:datatype=<strong>"FILE"</strong> pmf:filespec=<strong>"RequirementId"</strong> &gt;
+  &lt;xs:sequence&gt;
+    &lt;xs:element name="Id" type="Id" pmf:autovalue="true" /&gt; &lt;!-- to indicate to the generator that this "Id" is an "autovalue" --&gt;
+    &lt;xs:element name=<strong>"RequirementId"</strong> type="RequirementId"/&gt;
+    ...
+  &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+&lt;xs:complexType name="Test" pmf:datatype=<strong>"FILE"</strong> pmf:filespec=<strong>"TestId"</strong> &gt;
+  &lt;xs:sequence&gt;
+    &lt;xs:element name="Id" type="Id" pmf:autovalue="true" /&gt; &lt;!-- to indicate to the generator that this "Id" is an "autovalue" --&gt;
+    &lt;xs:element name=<strong>"TestId"</strong> type="TestId"/&gt;
+    ...
+  &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;!-- The simple types --&gt;
+
+&lt;xs:simpleType name="DataSpecification"&gt;
+  &lt;xs:restriction base="xs:string"/&gt;
+&lt;/xs:simpleType&gt;
+&lt;xs:simpleType name="DataType"&gt;
+  &lt;xs:restriction base="xs:string"&gt;
+  &lt;xs:enumeration value=<strong>"FILE"</strong>/&gt;
+  &lt;xs:enumeration value=<strong>"FOLDER_AND_FILE"</strong>/&gt;
+  &lt;/xs:restriction&gt;
+&lt;/xs:simpleType&gt;
+
+&lt;/xs:schema&gt;</code></pre>
+
+<p>Finally, after importing the model with the utility <strong>pmfgen</strong>, the user has still to edit the "custom" classes to finish the settings of the data splitting: 
+in the IncludedDataInfo class(es), the following methods must be implemented:</p>
+
+<pre><code class="language-python" data-keep-tags="strong">class IncludedDataInfoSuper(PMFObject):
+    '''
+    '''
+    @classmethod
+    def is_included_datainfo_class(cls):
+        return True
+    
+    def get_datainfo_datatype(self):
+        return self.DataType
+    
+    def get_datainfo_dataspecification(self):
+        return self.DataSpecification
+    
+    def set_datainfo_datatype(self, datatype):
+        self.DataType = datatype
+    
+    def set_datainfo_dataspecification(self, dataspecification):
+        self.DataSpecification = dataspecification</code></pre>
+
+<p></p>
+<p>That's it!. Saving a new project will create the whole file hierarchie. Reading the root
+will read the the whole file hierarchie and display it in the tree as a single object.</p>
+
+<p>Last point of importance: the root file must be stored in a new empty folder. This is because, when saving the project,
+every subfolder which does not belong to the project will be deleted. So when creating a new "splitted" project, root file
+has to be given with the form &lt;folder&gt;/&lt;filename&gt;</p>
+
+
+<h2 id="L3049">Comments in XML</h2>
+
+<p>XML allows comments through the use of the <code>&lt;!-- --&gt;</code> notation.</p>
+<p>Comments can be read and written back. For this, the python module <code>lxml</code> has to be
+installed, as the build-in python module for XML <code>xml.etree.cElementTree</code> does not
+support comments reading.</p>
+
+<p>Comments can also be edited, but the user needs to setup the classes where comments can be edited.</p>
+
+<p>First, comments are read and put in a object instance in the special attribute <code>_xml_comment_</code>.</p>
+
+<p>So the class has to define such an attribute, and this has to be performed in the generated super class of the class
+we consider. In the following, we suppose the XSD defines a complex type named <strong>ObjectWithComment</strong>, so
+a class named <code>ObjectWithComment</code> is defined in the generated module and a class named <code>ObjectWithCommentSuper</code>
+in the custom classes.</p>
+
+<p>When reading a XML file, if there is a comment defined inside the tags related to an object of type <code>ObjectWithComment</code>,
+then this comment will be read and its content put in the attribute <code>_xml_comment_</code> of the object of type <code>ObjectWithComment</code>.
+</p>
+
+<pre><code class="language-python" data-keep-tags="strong">
+class ObjectWithCommentSuper(PMFObject):
+    '''
+    '''
+    formular = (
+        ...<span style="color:#0000ff">
+        ('comment'           , '_xml_comment_'       , 'std_lineedit'   , None), </span>
+        ...
+    )
+    
+    def __init__(self):
+        '''
+        '''
+        PMFObject.__init__(self)
+        <span style="color:#0000ff">
+        self._xml_comment_ = ''
+        self.xml["_xml_comment_"] = { 'xml_type':'comment', 'xml_tag':None, 'properties':{'xs_type': 'xs:string'} }
+        </code>
+</pre>
+
+<p>The <code>__init__</code> method defines the attribute <code>_xml_comment_</code>, and <code>self.xml["_xml_comment_"]</code> has also to be defined.
+Moreover, the formular defines a formular item related to the attribute <code>_xml_comment_</code>, so that the comment can be viewed and edited.
+</p>
+
+<p>Note: if the user does not want to edit the comments present in the XML file, there is no need to define the attribute <code>_xml_comment_</code>.</p>
+<p>
+
+<h2 id="L3839">Requirement / Dependencies</h2>
+
+<h3 id="L24117">Requirement </h3>
+
+<p>PMFed has been tested with Python-3.7, and should work for version higher than 3.7 too.</p>
+  
+<p>The dependancies are:</p>
+
+<ul>
+  <li>PySide6 (for Qt 6.2.0)</li>
+  <li>lxml-4.2.5 (xml validation + XML comments)</li>
+  <li>jsonchema-3.2.0 (json validation)</li>
+</ul>
+
+<p>Here too, higher version of these dependancies should work.</p>
+
+<p>Installation of the dependancies is straighforward with the python <strong>pip</strong> utility:</p>
+
+<pre>
+> python -m pip install PySide6
+> python -m pip install lxml
+> python -m pip install jsonschema
+</pre>
+
+<p>Install PeXJ from <code>pexj-1.0.0.tar.gz</code>: unzip and untar; then install through <code>python setup.py
+install</code> command.</p>
+
+
+<h2>Examples</h2>
+
+<h3>JSON Examples</h3>
+<ul>
+  <li>json_basic: 
+    <p>demonstates basic types widgets formulars</p>
+  </li>
+  <li>json_containers 
+    <p>demonstates complex types handling and anyOf usage</p>
+  </li>
+  <li>json_oneof 
+    <p>demonstates oneof handling when children are mandatory (formular in formular through customization)</p>
+  </li>
+  <li>json_allof 
+    <p>demonstates how to define and use derived classes with JSON with special JSON schema</p>
+  </li>
+  <li>json_simplerefs 
+    <p>demonstates usage for references (uni directional) inside json schemas</p>
+  </li>
+  <li>json_backrefs 
+    <p>demonstates usage for references (bi directional) inside json schemas</p>
+  </li>
+  <li>json_reqtool 
+    <p>demonstates advance usage: a requirement/design/test tool</p>
+  </li>
+  <li>json_reqtool_splitting 
+    <p>demonstates advance usage: a requirement/design/test tool with file splitting</p>
+  </li>
+ 
+</ul>
+
+<h3>XML Examples</h3>
+<ul>
+  <li>xml_basic: 
+    <p>demonstates basic types widgets formulars</p>
+  </li>
+  <li>xml_containers 
+    <p>demonstates complex types handling</p>
+  </li>
+  <li>xml_oneof 
+    <p>demonstates oneof handling when children are mandatory (formular in formular through customization)</p>
+  </li>
+  <li>xml_simplerefs 
+    <p>demonstates usage for references (uni directional) inside xsd schemas</p>
+  </li>
+  <li>xml_backrefs 
+    <p>demonstates usage for references (bi directional) inside xsd schemas</p>
+  </li>
+  <li>xml_reqtool 
+    <p>demonstates advance usage: a requirement/design/test tool</p>
+  </li>
+  <li>xml_reqtool_splitting 
+    <p>demonstates advance usage: a requirement/design/test tool with file splitting</p>
+  </li>
+  <li>xscxml 
+    <p>demonstates to to use human readable, editable UUIDs</p>
+  </li>
+</ul>
+
+<h2 id="L3551">FAQ</h2>
+
+<h3 id="L3553">The application at startup tries to load a file which does not follow the model specified</h3>
+
+<p>If you start PMFed with a model <code>&lt;model1&gt;</code>, create for this model a file f1.xml, and quit the app,
+at the second run, the file f1.xml is automatically load. Hopefully, you started the app with the same model (again
+with <code>&lt;model1&gt;</code>). If you start the app with an other model <code>&lt;model2&gt;</code>, the app still
+tries anyway to load the file f1.xml (which does not match the model <code>&lt;model2&gt;</code>. Close then by hand in
+the app the data (from the tree context menu), or start the app with option <code>-e</code> (or <code>--empty</code>)
+for a clean startup.</p>
+
+<h3 id="L3575">XSD/JSON validation does not work</h3>
+
+<p>Have a look at the generated main python module <code>mymodel.py</code> and at the function <code>def
+get_schema_file()</code>. The schema file is found if you started the app in the same folder as where is located the
+main python module, or the location is given by the related environment variable.</p>
+
+<h3 id="L3585">The tree view display the tree items with strange labels</h3>
+
+<p>Tree items labels can be customized. Read the related section in "Advance Usage".</p>
+
+<h3 id="L3589">From the logger validation outout, click on the error msg does not jump to the item in the tree</h3>
+
+<p>Be sure to click on a message resulting from the last validation output (not from a previous validation).</p>
+
+<h3 id="L3590">Ui Files: how can I use them?</h3>
+
+<p>Investigate the examples making use of Ui files. Note the "conventions" used for the widgets names.</p>
+</body>
+</html>
