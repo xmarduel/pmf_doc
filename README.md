@@ -61,4 +61,4 @@ and a logger view (with document validation) for the <strong>PMFed</strong> appl
 </ul>
 
 <h3>Interested?</h3>
-<p>Please enter in contact for pricing</p>
+<p>The full tutorial is given in this repo. Please take contact for pricing if interest is present.</p>
