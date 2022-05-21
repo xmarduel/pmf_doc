@@ -60,5 +60,10 @@ and a logger view (with document validation) for the <strong>PMFed</strong> appl
   <li>tree view is easily customizable</li>
 </ul>
 
+<h3>Note</h3>
+<p>There are more and more free (and sometimes nice) JSON editors on the internet, but these are limited per nature
+as the schema is read on the fly and only basic editing is possible.</p>
+<p>The concept here is to provide a framework to fully control the model and write a real wolrd application.</p>
+  
 <h3>Interested?</h3>
 <p>The full tutorial is given in this repo. Please take contact for pricing if interest is present.</p>
