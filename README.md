@@ -14,7 +14,7 @@ This utility generates from a <strong>XSD</strong> or <strong>JSON Schema</stron
   <li>model classes are <strong>generated</strong> from the schema.</li>
   <li><strong>intelligent tree</strong>: creation of new children based on the <strong>restrictions specified in the schema</strong>
   (choice, minOccurs/maxOccurs).</li>
-  <li><strong>formulars</strong> are <span style="color:#ff0000">"real" formulars</span> for user friendly editing (not just strings to edit like in so many others apps)</li>
+  <li><strong>formulars</strong> are <span style="color:#ff0000">"real" formulars</span> for user friendly editing (not just strings to edit like in so many others cheaps apps)</li>
   <li><strong>formulars are automatically derived from the model</strong>: a formular contains all the widgets
     necessary to edit all the attributes of an element, and each widget in a formular is dedicated to the type of the
     underlying attribute type. (SpinBox for integers types, ComboBox for enums etc.) and follow the <strong>possible
