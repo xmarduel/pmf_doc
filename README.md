@@ -59,6 +59,7 @@ and a logger view (with document validation) for the <strong>PMFed</strong> appl
 <ul>
   <li>formulars are easily custumizable</li>
   <li>tree view is easily customizable</li>
+  <li>and of courde generated classes are customizable</li>
 </ul>
 
 <h3>Note</h3>
