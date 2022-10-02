@@ -51,7 +51,7 @@ in a python "main" module (with the command line tool <strong>pmfgen.py</strong>
 complete control over the generated classes. Finally, a framework is furnished, which is completely user model
 agnostic. The framework implements a super class where the basic functionalities of the generated classes are
 implemented. The <strong>PMFed</strong> application simply relies on this framework (and the generated classes), and
-thus allows the tree-formular editor to work out of the box. The framework furnishes also a treeview, a formular view
+thus allows the tree-formular editor to work out of the box for any model. The framework furnishes also a treeview, a formular view
 and a logger view (with document validation) for the <strong>PMFed</strong> application.</p>
 
 <p>Because the user will certainly want it, great care has be done so that the user can <strong>customize</strong> the
