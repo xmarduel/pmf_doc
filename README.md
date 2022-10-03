@@ -15,14 +15,15 @@ generated classes can be merged with the existing, modified, classes.</p>
   <li>model classes are <strong>generated</strong> from the schema.</li>
   <li><strong>intelligent tree</strong>: creation of new children based on the <strong>restrictions specified in the schema</strong>
   (choice, minOccurs/maxOccurs).</li>
-  <li><strong>formulars</strong> are <span style="color:#ff0000">"real" formulars</span> for user friendly editing (not just strings to edit like in so many others cheaps apps)</li>
+  <li><strong>formulars</strong> are <span style="color:#ff0000">"real" formulars</span> for user friendly editing 
+  (not just strings to edit like in so many others cheaps apps)</li>
   <li><strong>formulars are automatically derived from the model</strong>: a formular contains all the widgets
     necessary to edit all the attributes of an element, and each widget in a formular is dedicated to the type of the
     underlying attribute type. (SpinBox for integers types, ComboBox for enums etc.) and follow the <strong>possible
     restrictions</strong> on the simple types specified in the schema (pattern, min, max, etc...).</li>
   <li><strong>formulars</strong> can also be defined with <strong>Qt ui files</strong>.</li>
-  <li><strong>XSD/JSON schema validation on the "fly" during editing</strong> (and jump to location on validation error
-    msg click).</li>
+  <li><strong>XSD/JSON schema validation on the "fly" during editing</strong> (and jump to location on validation 
+  error msg click).</li>
   <li><strong>support for "comments" in XML (see in Appendix)</strong>.</li>
   <li><strong>support for "references" in XML models (unidirectional or bi-directional)</strong> through special
     notations in the XSD schema (see in Appendix).</li>
@@ -51,11 +52,11 @@ in a python "main" module (with the command line tool <strong>pmfgen.py</strong>
 complete control over the generated classes. Finally, a framework is furnished, which is completely user model
 agnostic. The framework implements a super class where the basic functionalities of the generated classes are
 implemented. The <strong>PMFed</strong> application simply relies on this framework (and the generated classes), and
-thus allows the tree-formular editor to work out of the box for any model. The framework furnishes also a treeview, a formular view
-and a logger view (with document validation) for the <strong>PMFed</strong> application.</p>
+thus allows the tree-formular editor to work out of the box for <strong>any model</strong>. The framework furnishes also a
+treeview, a formular view and a logger view (with document validation) for the <strong>PMFed</strong> application.</p>
 
-<p>Because the user will certainly want it, great care has be done so that the user can <strong>customize</strong> the
-<strong>tree-formular application</strong> to fit its own needs:</p>
+<p>Because the user will certainly want it, great care has be done so that the user can <strong>customize</strong> 
+the <strong>tree-formular application</strong> to fit its own needs:</p>
 <ul>
   <li>formulars are easily custumizable</li>
   <li>tree view is easily customizable</li>
