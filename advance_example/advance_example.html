@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+  <title>Advance Example</title>
+  <meta name="generator" content="Amaya, see http://www.w3.org/Amaya/" />
+  <link href="css/prism.css" rel="stylesheet" />
+  <style>
+pre[class*="language-"] {
+      font-size: 12px;
+      font-style: normal;
+      font-family: monospace;
+      background-color: #ffffff;
+}
+
+span.code {
+  font-size: 10pt;
+  color: black;
+}
+span.code_comment {
+  font-size: 10pt;
+  color: green;
+}
+  </style>
+</head>
+
+<body>
+<script type="text/javascript" src="js/prism.js">
+</script>
+<script type="text/javascript" src="js/prism_keep_tag.js">
+</script>
+
+<h1 style="text-align:center;margin-left:auto;margin-right:auto;">Advance
+Example</h1>
+
+<h3>Introduction</h3>
+
+<p>We wish to build a fancy application based on PMFed: a "Book" editor, where
+the book is divided into chapters, each chapter can have as many sub-chapters
+as possible, at every level. The content of each chapter will be given as HTML
+data, and can be edited in the app as such. Of course, PMF contains many
+formular "widgets", and one of these is the PMFHtmlEditor: a build-in HTML
+editor, based on the excellent open-source "Sun Editor", wich is embedded in
+PMF throught Qt QWebEngine.</p>
+
+<p>We will proceed in 3 steps: </p>
+<ol>
+  <li>We build first a basic "single file" application, where the whole data is
+    store in 1 XML data</li>
+  <li>Then we refactor the app so that each chapter is its own file, based on
+    our "file splitting" technic</li>
+  <li>Finally, the HTML data of each chapter will be serialize in its own HTML
+    file, so that viewing/editing each HMTL file will be possible outside the
+    PMF app.</li>
+</ol>
+
+<p>Each step requires some tuning as it is not a completely trivial
+application. Maybe the framework will have to be adapted, who knows.</p>
+
+<h3>Basic Application</h3>
+
+<p>We write the XSD corresponding to our model: a fairly simple XSD:</p>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xs:schema xmlns="http://www.pexj.com/pmf" 
+   xmlns:pmf="http://www.pexj.com/pmf" 
+   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+   targetNamespace="http://www.pexj.com/pmf" elementFormDefault="qualified" attributeFormDefault="unqualified"&gt;
+
+&lt;!-- **************************************************************************************** --&gt;
+&lt;!-- ***********************************  SCHEMA FOR HTML BOOK   **************************** --&gt;
+&lt;!-- **************************************************************************************** --&gt;
+
+&lt;xs:element name="Book" type="Book" /&gt;
+
+&lt;xs:complexType name="Book"&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element name="Author" type="Author"/&gt;
+        &lt;xs:element name="BookTitle" type="BookTitle"/&gt;
+        &lt;xs:element name="Chapter" type="Chapter" minOccurs="0" maxOccurs="unbounded"/&gt;
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name="Chapter"&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element name="ChapterTitle" type="ChapterTitle"/&gt;
+        &lt;xs:element name="ChapterText" type="ChapterText"/&gt;
+        &lt;xs:element name="Chapter" type="Chapter" minOccurs="0" maxOccurs="unbounded"/&gt;
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;!--  The simple types --&gt;
+
+&lt;xs:simpleType name="Author"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType&gt;
+&lt;xs:simpleType name="BookTitle"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType&gt;
+
+&lt;xs:simpleType name="ChapterTitle"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType&gt;
+&lt;xs:simpleType name="ChapterText"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType&gt;
+
+&lt;/xs:schema&gt;</code></pre>
+
+<p></p>
+
+<p>So there is no difficulty in this XSD, but a problem still arises: The
+ChapterText text will be saved and read in HTML, so it interfers with the XML
+of our data: we need to tell PMF to read/save this data as "CDATA", and it has
+not yet be done before in PMF before this project. So the final saved data
+would look like:</p>
+<pre><code class="language-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;Book xmlns="http://www.pexj.com/pmf"&gt;
+  &lt;Author&gt;&lt;/Author&gt;
+  &lt;BookTitle&gt;&lt;/BookTitle&gt;
+  &lt;Chapter&gt;
+    &lt;ChapterTitle&gt;CH-1&lt;/ChapterTitle&gt;
+    &lt;ChapterText&gt;&lt;![CDATA[&lt;html&gt;
+                &lt;body&gt;
+                    &lt;p&gt;First Chapter text&lt;/p&gt;
+                &lt;/body&gt;
+            &lt;/html&gt;
+]]&gt;&lt;/ChapterText&gt;
+  &lt;/Chapter&gt;
+  &lt;Chapter&gt;
+    &lt;ChapterTitle&gt;CH-2&lt;/ChapterTitle&gt;
+    &lt;ChapterText&gt;&lt;![CDATA[&lt;html&gt;
+  &lt;body&gt;
+    &lt;p&gt; &lt;/p&gt;
+    &lt;h3&gt;This is a seccond chapter data&lt;/h3&gt;
+    &lt;p&gt; &lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;item1&lt;/li&gt;
+      &lt;li&gt;item2&lt;/li&gt;
+      &lt;li&gt;item3&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;p&gt; &lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+]]&gt;&lt;/ChapterText&gt;
+  &lt;/Chapter&gt;
+&lt;/Book&gt;</code></pre>
+
+<p>Luckily, the serializer has some "hooks" when serializing objects, and one
+of it is called "<strong><code>xml_custom_write_attr</code></strong>".</p>
+
+<p></p>
+
+<p>So the generated ChapterSuper class (from the <code>pmfgen</code> utility)
+is edited</p>
+<pre><code class="language-python">class ChapterSuper(PMFObject):
+    '''
+    '''
+    formular = PMFObject.make_formular(
+        # &lt;legend&gt;                      , &lt;attribute&gt;                   , &lt;ctrl_type&gt;              , &lt;ctrl_props&gt; 
+        (""                            , "TITLEBANNER"                 , "pmf_titlebanner"        , None),
+        ('ChapterTitle'                , 'ChapterTitle'                , 'std_lineedit'           , None), 
+        ('ChapterText'                 , 'ChapterText'                 , '<strong>pmf_html_editor</strong>'        , None), 
+        (""                            , "HELPBANNER"                  , "pmf_helpbanner"         , None),
+    )
+
+    ...
+    
+    # to serialize attributes in a 'custom' manner
+    xml_custom_write_attributes = ['ChapterText']</code></pre>
+
+<p>Note how we put the string "<strong>pmf_html_editor</strong>" in the widget
+type of the attribute "ChapterText". And we also indicates in the class member
+"<strong>xml_custom_write_attributes</strong>" that this attribute has to be
+serialized in a special manner.</p>
+<pre><code class="language-python">    def xml_custom_write_attr(self, parent_node, attribute):
+        '''
+        '''
+        if attribute == "ChapterText":
+            '''
+            The data from sun editor as CDATA
+            '''
+            chapter_text = self.ChapterText.strip()
+
+            html_text = chapter_text
+            if not html_text.startswith("&lt;html&gt;"):
+                if not html_text.startswith("&lt;body&gt;"):
+                    html_text  ="&lt;html&gt;&lt;body&gt;%s&lt;/body&gt;&lt;/html&gt;" % self.ChapterText
+                else:
+                    html_text  ="&lt;html&gt;%s&lt;/html&gt;" % self.ChapterText
+
+            html_elt = html.fromstring(html_text)
+            html_pretty = etree.tostring(html_elt, pretty_print=True)
+
+            html_node = etree.SubElement(parent_node, "ChapterText")
+            html_node.text = etree.CDATA(html_pretty)
+
+            return html_node
+        
+        return None </code></pre>
+
+<p>And that's it. It was pretty simple, isn't it. We use the excellent lxml
+<code>etree.CDATA</code> Element for the serialization, reading is then
+automatic.</p>
+
+<p></p>
+
+<h3>Splitted Files</h3>
+
+<p></p>
+
+<p>The splitting of files allows to a certain degree some "team work". In the
+same project, everyone can edit its own chapter without interfering with the
+others. Details of file splitting is given in the tutorial. We just give here
+the new XSD and how the serialization looks like.</p>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xs:schema 
+    xmlns="http://www.pexj.com/pmf" 
+    xmlns:pmf="http://www.pexj.com/pmf" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://www.pexj.com/pmf" 
+    elementFormDefault="qualified" 
+    attributeFormDefault="unqualified"&gt;
+
+&lt;!-- **************************************************************************************** --&gt;
+&lt;!-- ***********************************  SCHEMA FOR HTML EDITOR  *************************** --&gt;
+&lt;!-- **************************************************************************************** --&gt;
+
+&lt;xs:element name="Book" type="Book" /&gt;
+&lt;xs:element name="Chapter" type="Chapter" /&gt;
+
+&lt;xs:complexType name="IncludedDataInfo"&gt;
+    &lt;xs:attribute name="DataSpecification" type="DataSpecification" use="required"/&gt;
+    &lt;xs:attribute name="DataType" type="DataType" use="required"/&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name="Book"&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element name="Author" type="Author"/&gt;
+        &lt;xs:element name="BookTitle" type="BookTitle" default="__book__"/&gt;
+        &lt;xs:element name="IncludeChapter" type="IncludedDataInfo" pmf:inctype="Chapter" minOccurs="0" maxOccurs="unbounded"/&gt;
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name="Chapter" pmf:datatype="FOLDER_AND_FILE" pmf:folderspec="ChapterTitle" pmf:filespec="chapterInfo"&gt;   &lt;!--  DataSpecification="&lt;ChapterTitle&gt;/chapterInfo.xml" --&gt;
+&lt;xs:sequence&gt;
+    &lt;xs:element name="ChapterTitle" type="ChapterTitle" default="__chapter__"/&gt;
+    &lt;xs:element name="ChapterText" type="ChapterText"/&gt;
+    &lt;xs:element name="IncludeChapter" type="IncludedDataInfo" pmf:inctype="Chapter" minOccurs="0" maxOccurs="unbounded"/&gt; 
+&lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;!--  The simple types --&gt;
+
+&lt;xs:simpleType name="DataSpecification"&gt;
+    &lt;xs:restriction base="xs:string"/&gt;
+&lt;/xs:simpleType&gt;
+
+&lt;xs:simpleType name="DataType"&gt;
+    &lt;xs:restriction base="xs:string"&gt;
+        &lt;xs:enumeration value="FILE"/&gt;
+        &lt;xs:enumeration value="FOLDER_AND_FILE"/&gt;
+    &lt;/xs:restriction&gt;
+&lt;/xs:simpleType&gt;
+
+&lt;!--  The simple types --&gt;
+
+&lt;xs:simpleType name="Author"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType
+&lt;xs:simpleType name="BookTitle"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType&gt;
+
+&lt;xs:simpleType name="ChapterTitle"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType&gt;
+&lt;xs:simpleType name="ChapterText"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType&gt;
+&lt;/xs:schema&gt;</code></pre>
+
+<p>With this schema, every Chapter is serialized in its own folder/file so a
+chapter is stored in a folder named after the chapter "title" while a chapter
+file itself is named "<strong>chapterInfo.xml</strong>" and looks like:</p>
+<pre><code class="language-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;Chapter&gt;
+    &lt;ChapterTitle&gt;CH-2&lt;/ChapterTitle&gt;
+    &lt;ChapterText&gt;&lt;![CDATA[&lt;html&gt;
+  &lt;body&gt;
+    &lt;p&gt; &lt;/p&gt;
+    &lt;h3&gt;This is a seccond chapter data&lt;/h3&gt;
+    &lt;p&gt; &lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;item1&lt;/li&gt;
+      &lt;li&gt;item2&lt;/li&gt;
+      &lt;li&gt;item3&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;p&gt; &lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+]]&gt;&lt;/ChapterText&gt;
+  &lt;/Chapter&gt;</code></pre>
+
+<p>But still it is not possible to view the content of the chapter file in a
+browser as it is xml and as the html data is in a CDATA section. Bad...</p>
+
+<p></p>
+
+<h3>Final Solution</h3>
+
+<p>The proposed solution is the following: we will also write the ChapterText
+as its own file, with file suffx beeing ".html". So the XSD is trnasformed
+again:</p>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xs:schema xmlns="http://www.pexj.com/pmf" 
+    xmlns:pmf="http://www.pexj.com/pmf" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://www.pexj.com/pmf" 
+    elementFormDefault="qualified" 
+    attributeFormDefault="unqualified"&gt;
+
+&lt;!-- **************************************************************************************** --&gt;
+&lt;!-- ***********************************  SCHEMA FOR HTML EDITOR  *************************** --&gt;
+&lt;!-- **************************************************************************************** --&gt;
+
+&lt;xs:element name="Book" type="Book" /&gt;
+&lt;xs:element name="Chapter" type="Chapter" /&gt;
+
+&lt;xs:complexType name="IncludedDataInfo"&gt;
+    &lt;xs:attribute name="DataSpecification" type="DataSpecification" use="required"/&gt;
+    &lt;xs:attribute name="DataType" type="DataType" use="required"/&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name="IncludeHtmlDataInfo"&gt;
+    &lt;xs:attribute name="DataSpecification" type="DataSpecification" use="required"/&gt;
+    &lt;xs:attribute name="DataType" type="DataType" use="required"/&gt;
+&lt;/xs:complexType&gt;
+
+
+&lt;xs:complexType name="Book"&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element name="Author" type="Author"/&gt;
+        &lt;xs:element name="BookTitle" type="BookTitle" default="__book__"/&gt;
+        &lt;xs:element name="IncludeChapter" type="IncludedDataInfo" pmf:inctype="Chapter" minOccurs="0" maxOccurs="unbounded"/&gt;
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name="Chapter" pmf:datatype="FOLDER_AND_FILE" pmf:folderspec="ChapterTitle" pmf:filespec="chapterInfo"&gt;   &lt;!--  DataSpecification="&lt;ChapterTitle&gt;/chapterInfo.xml" --&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element name="ChapterTitle" type="ChapterTitle" default="__chapter__"/&gt;
+        &lt;xs:element name="IncludeHtmlData" type="IncludeHtmlDataInfo" pmf:inctype="html" minOccurs="1" maxOccurs="1"/&gt;
+        &lt;xs:element name="IncludeChapter" type="IncludedDataInfo" pmf:inctype="Chapter" minOccurs="0" maxOccurs="unbounded"/&gt; 
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;xs:complexType name="html" pmf:datatype="FILE" pmf:filespec="title" &gt; &lt;!-- DataSpecification="&lt;title&gt;.html" --&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element name="title" type="xs:string" default="__title__" /&gt;
+        &lt;xs:element name="body" type="xs:string"/&gt; 
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+
+&lt;!--  The simple types --&gt;
+
+&lt;xs:simpleType name="DataSpecification"&gt;
+    &lt;xs:restriction base="xs:string"/&gt;
+&lt;/xs:simpleType&gt;
+
+&lt;xs:simpleType name="DataType"&gt;
+    &lt;xs:restriction base="xs:string"&gt;
+        &lt;xs:enumeration value="FILE"/&gt;
+        &lt;xs:enumeration value="FOLDER_AND_FILE"/&gt;
+    &lt;/xs:restriction&gt;
+&lt;/xs:simpleType&gt;
+
+&lt;!--  The simple types --&gt;
+
+&lt;xs:simpleType name="Author"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType&gt;
+&lt;xs:simpleType name="BookTitle"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType&gt;
+
+&lt;xs:simpleType name="ChapterTitle"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType&gt;
+&lt;xs:simpleType name="ChapterText"&gt;&lt;xs:restriction base="xs:string"/&gt;&lt;/xs:simpleType&gt;
+
+&lt;/xs:schema&gt;</code></pre>
+
+<p>So it starts be be a little tricky. The generated ChapterSuper class has to
+be edited as usual for a class containing splitted members:</p>
+<pre><code class="language-python">class ChapterSuper(PMFObject):
+    '''
+    '''
+    formular = PMFObject.make_formular(
+        # &lt;legend&gt;                      , &lt;attribute&gt;                   , &lt;ctrl_type&gt;              , &lt;ctrl_props&gt; 
+        (""                            , "TITLEBANNER"                 , "pmf_titlebanner"        , None),
+        ('ChapterTitle'                , 'ChapterTitle'                , 'std_lineedit'           , None), 
+        # ('IncludeHtmlData'             , 'html'                        , 'pmf_childformularview'  , None), 
+        # ('IncludeChapters'             , 'Chapter'                     , 'pmf_childrentableview'  , None), 
+        (""                            , "HELPBANNER"                  , "pmf_helpbanner"         , None),
+    )
+
+    # defining a custom formular (ui file)
+    custom_formular = os.path.join(os.environ['PMF_MODELS'], "xml_html_editor_splitting", "forms", "Chapter.ui")
+
+    # defining a tree icon
+    tree_icon = os.path.join(os.environ['PMF_MODELS'], "xml_html_editor_splitting", "icons", "Chapter.png")
+
+    # html
+    html_help = os.path.join(os.environ['PMF_MODELS'], "xml_html_editor_splitting", "html_help", "Chapter.html")
+
+    # defining default tree label tag
+    tree_custom_tag = None
+    # defining which attribute is used to draw the tree label
+    tree_label_attribute = 'ChapterTitle'
+
+    def __init__(self):
+        '''
+        '''
+        PMFObject.__init__(self)
+
+    # --------------------------------------------------------------------------
+    # file splitting handling
+    # this method is also defined in the base class PMFObject with default 'False'
+    # --------------------------------------------------------------------------
+    @classmethod
+    def can_have_splitted_children(cls):
+        return True
+
+    ...</code></pre>
+
+<p>And the whole class htmlSuper.py</p>
+<pre><code class="language-python">class htmlSuper(PMFObject):
+    '''
+    '''
+    formular = PMFObject.make_formular(
+        # &lt;legend&gt;                      , &lt;attribute&gt;                   , &lt;ctrl_type&gt;              , &lt;ctrl_props&gt; 
+        (""                            , "TITLEBANNER"                 , "pmf_titlebanner"        , None),
+        ('title'                       , 'title'                       , 'std_lineedit'           , None), 
+        ('body'                        , 'body'                        , 'pmf_html_editor'        , None), 
+        (""                            , "HELPBANNER"                  , "pmf_helpbanner"         , None),
+    )
+
+    # defining a custom formular (ui file)
+    custom_formular = os.path.join(os.environ['PMF_MODELS'], "xml_html_editor_splitting", "forms", "html.ui")
+
+    # defining a tree icon
+    tree_icon = os.path.join(os.environ['PMF_MODELS'], "xml_html_editor_splitting", "icons", "html.png")
+
+    # html
+    html_help = os.path.join(os.environ['PMF_MODELS'], "xml_html_editor_splitting", "html_help", "html.html")
+
+    # defining default tree label tag
+    tree_custom_tag = None
+    # defining which attribute is used to draw the tree label
+    tree_label_attribute = 'title'
+
+
+    def __init__(self):
+        '''
+        '''
+        PMFObject.__init__(self)
+
+        self.xml_declaration = False
+        self.xml_namespaces = False
+
+    def get_serialization_format(self):
+        '''
+        Overwrite default serialization format (was 'xml')
+        '''
+        return 'html'
+    
+    # --------------------------------------------------------------------------
+    # tree view customization
+    # all these methods are also defined in the base class PMFObject with defaults
+    # --------------------------------------------------------------------------
+
+    ... 
+
+    # -----------------------------------------------------------------------
+    # custom read/write the html file
+    # -----------------------------------------------------------------------
+
+    def xml_custom_read(self, node, reader):
+        '''
+        '''
+        # -------------------------------------------------------------------
+        def get_title(node):
+            child_node = node.getchildren()
+        
+            for child_node in child_node:
+                ch_node_tag = child_node.tag
+                if ch_node_tag == 'head':
+                    for cchild_node in child_node:
+                        cch_node_tag = cchild_node.tag
+                        if cch_node_tag == 'title':
+                            return cchild_node.text
+            
+            return ""
+        # -------------------------------------------------------------------
+        def get_body(node):
+            child_node = node.getchildren()
+        
+            for child_node in child_node:
+                ch_node_tag = child_node.tag
+            
+                if ch_node_tag == 'body':
+                    text = html.tostring(child_node, encoding="unicode")
+                    if text.endswith("\n"):
+                        text = text[:-1]
+                    if text.startswith("&lt;body&gt;"):
+                        text = text[6:]
+                    if text.endswith("&lt;/body&gt;"):
+                        text = text[:-7]
+                    if text.startswith("\n"):
+                        text = text[1:]
+                    text = text.strip()
+                    return text
+            
+            return ""
+        # -------------------------------------------------------------------
+        
+        if WITH_LXML:
+            pass
+        else:
+            etree.register_namespace("", "http://www.pexj.com/pmf")
+        
+        title = get_title(node)
+        body = get_body(node)
+        
+        setattr(self, 'title', title)
+        setattr(self, 'body', body)
+        
+    def xml_custom_write(self, node):
+        '''
+        '''
+        print("xml_custom_write at node %s =&gt; HTML BODY: %s" %(node.tag, self.body))
+        
+        headnode = etree.fromstring("&lt;head&gt;&lt;title&gt;%s&lt;/title&gt;&lt;/head&gt;" % self.title)
+
+        body_strippped = self.body.strip()
+
+        if body_strippped.startswith("&lt;html&gt;") and body_strippped.endswith("&lt;/html&gt;"):
+            body_strippped = body_strippped[6:-6]
+       
+        if not body_strippped.startswith("&lt;body&gt;"):
+            body_strippped  ="&lt;body&gt;%s&lt;/body&gt;" % body_strippped
+        else:
+            pass
+
+        # pretty
+        #body_node = html.fromstring(body_strippped) 
+        #body_pretty = etree.tostring(body_node, pretty_print=True)
+
+        # humm. LXML html does not understand this
+        body_strippped = body_strippped.replace("&lt;br&gt;", "&lt;br/&gt;")
+        body_strippped = body_strippped.replace("&lt;&amp;nbsp;&gt;", "")
+
+        bodynode = etree.fromstring(body_strippped)
+        
+        node.append(headnode)
+        node.append(bodynode)
+
+        #print(etree.tostring(node, pretty_print=True))
+
+        return</code></pre>
+
+<p>We see that the methods "<code><strong>xml_custom_read</strong></code>" and
+"<code><strong>xml_custom_write</strong></code>" are given. The input argument
+"<code><strong>node</strong></code>" is the node from the tag "html" in the
+html file. Maybe here the html has to be xml-like.</p>
+
+<p>From this node, the title and body of the html are extracted and stores in
+the 2 attributes "<code><strong>title</strong></code>" and
+"<code><strong>body</strong></code>" of the "html instance". </p>
+
+<p>For the "write" method, the input argument is as well the node from the
+"html" instance. Here indeed we try to xml-ify the html text data coming from
+the sun-editor. Maybe more has to be done there.</p>
+
+<p></p>
+
+<p>After editing in the PMF app, the folder looks like</p>
+<pre><span style="font-size: 10pt">example
++--- MYBOOK.xml
++--- CH-1
+     chapterInfo.xml
+     P11.html
++--- CH-2
+     chapterInfo.xml
+     P22.html</span></pre>
+
+<p>A "chapterInfo.xml" file:</p>
+<pre><code class="language-python">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;Chapter xmlns="http://www.pexj.com/pmf" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.pexj.com/pmf xml_html_editor_splitting.xsd"&gt;
+    &lt;ChapterTitle&gt;CH-1&lt;/ChapterTitle&gt;
+    &lt;IncludeHtmlData DataSpecification="P11.html" DataType="FILE" /&gt;
+&lt;/Chapter&gt;</code></pre>
+
+<p>And its included html file:</p>
+<pre><code class="language-python">&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;P11&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h3&gt;Paragraph1&lt;/h3&gt;
+        &lt;p&gt;The storys&lt;/p&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<h3>Conclusion</h3>
+
+<p>Even if our app is not perfect, it is quite a nice result for (for me) a few
+hours of work. The app is not perfect: while editing text in the sun-editor, we
+have to save the text once from the sun-editor so that the html data is
+"triggered" to PMF, and then save a second time to really save the data in the
+html files. A few lines of code in the framework had to be edited in order to
+handle the new suffix ".hrml" of the saved files.</p>
+</body>
+</html>
