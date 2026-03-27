@@ -2,28 +2,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
-  <title>PMFed</title>
-  <meta name="generator" content="Amaya, see http://www.w3.org/Amaya/" />
-  <link href="css/prism.css" rel="stylesheet" />
-  <style>
-pre[class*="language-"] {
-      font-size: 12px;
-      font-style: normal;
-      font-family: monospace;
-      background-color: #ffffff;
-}
 
-span.code {
-  font-size: 10pt;
-  color: black;
-}
-span.code_comment {
-  font-size: 10pt;
-  color: green;
-}
-  </style>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>PMFed</title>
+  <link href="css/prism.css" rel="stylesheet" />
+  <link href="css/pmfed.css" rel="stylesheet" />
+  <link href="css/simpletree.css" rel="stylesheet" />
+  <script type="text/javascript" src="js/prism.js" />
+  <script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+ </script>
+  <script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+ </script>
 </head>
 
 <body>
@@ -31,12 +21,10 @@ span.code_comment {
 <script src="js/prism.js"></script>
 <script src="js/prism_keep_tag.js"></script>
 
-<h1 style="text-align:center;margin-left:auto;margin-right:auto;">"XML &amp; JSON" Editor PMFed</h1>
+<div class="sidenav">
+<h3 class="title_sidenav">Contents</h3>
+<ul class="tree">
 
-<h2>Table of Contents</h2>
-
-<div class="toc">
-<ul>
   <li><a href="#L30">Introduction</a> 
     <ul>
       <li><a href="#L1874">What is PMFed ?</a></li>
@@ -137,8 +125,38 @@ span.code_comment {
         tree</a></li>
     </ul>
   </li>
+
 </ul>
+<script type="text/javascript">
+      var tree = document.querySelectorAll('ul.tree a:not(:last-child)');
+      for (var i = 0; i < tree.length; i++) {
+        tree[i].addEventListener('click', function (e) {
+          var parent = e.target.parentElement;
+          var classList = parent.classList;
+          if (classList.contains("open")) {
+            classList.remove('open');
+            var opensubs = parent.querySelectorAll(':scope .open');
+            for (var i = 0; i < opensubs.length; i++) {
+              opensubs[i].classList.remove('open');
+            }
+          } else {
+            classList.add('open');
+          }
+          if (classList.contains("open")) {
+            //e.preventDefault(); // on open -> jump (default)
+
+          } else {
+            e.preventDefault(); // on close
+          }
+        });
+      }</script>
 </div>
+
+<div class="main">
+
+<h1 class="etitle">"XML &amp; JSON" Editor PMFed</h1>
+
+
 
 <h2 id="L30">Introduction</h2>
 
@@ -3102,5 +3120,6 @@ main python module, or the location is given by the related environment variable
 <h3 id="L3590">Ui Files: how can I use them?</h3>
 
 <p>Investigate the examples making use of Ui files. Note the "conventions" used for the widgets names.</p>
+</div>
 </body>
 </html>
