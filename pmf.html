@@ -1,30 +1,18 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <title>PMFed</title>
-  <link href="css/prism.css" rel="stylesheet" />
-  <link href="css/pmfed.css" rel="stylesheet" />
-  <link href="css/simpletree.css" rel="stylesheet" />
-  <script type="text/javascript" src="js/prism.js" />
-  <script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=es6">
- </script>
-  <script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
- </script>
-</head>
-
+  <link href="doc/css/prism.css" rel="stylesheet" />
+  <link href="doc/css/pmfed.css" rel="stylesheet" />
+  <link href="doc/css/simpletree.css" rel="stylesheet" />
+  <script type="text/javascript" src="doc/js/prism.js" />
+  <script type="text/javascript" src="doc/js/prism_keep_tag.js"></script>
 <body>
 
-<script src="js/prism.js"></script>
-<script src="js/prism_keep_tag.js"></script>
 
 <div class="sidenav">
 <h3 class="title_sidenav">Contents</h3>
 <ul class="tree">
-
   <li><a href="#L30">Introduction</a> 
     <ul>
       <li><a href="#L1874">What is PMFed ?</a></li>
@@ -127,6 +115,7 @@
   </li>
 
 </ul>
+
 <script type="text/javascript">
       var tree = document.querySelectorAll('ul.tree a:not(:last-child)');
       for (var i = 0; i < tree.length; i++) {
@@ -145,17 +134,18 @@
           if (classList.contains("open")) {
             //e.preventDefault(); // on open -> jump (default)
 
-          } else {
+        } else {
             e.preventDefault(); // on close
-          }
-        });
-      }</script>
+        }
+    });
+}</script>
 </div>
 
+<!-- --------------------------------------------------------------------------->
+<!-- --------------------------------------------------------------------------->
+
 <div class="main">
-
-<h1 class="etitle">"XML &amp; JSON" Editor PMFed</h1>
-
+<h1 class="etitle">"XML &amp; JSON" Graphical Editor PMFed</h1>
 
 
 <h2 id="L30">Introduction</h2>
@@ -174,7 +164,6 @@ This utility generates from a <strong>XSD</strong> or <strong>JSON Schema</stron
   <li><strong>model based</strong>: works for every (not <span style="color:#ff0000">**too**</span> complicated) XSD or
     JSON schema.</li>
   <li>model classes are <strong>generated</strong> from the schema.</li>
-  <li><strong>intelligent tree</strong>: creation of new children based on the <strong>restrictions specified in the schema</strong>
   (choice, minOccurs/maxOccurs).</li>
   <li><strong>formulars</strong> are <span style="color:#ff0000">"real" formulars</span> for user friendly editing (not just strings to edit like in so many others apps)</li>
   <li><strong>formulars are automatically derived from the model</strong>: a formular contains all the widgets
@@ -229,15 +218,18 @@ and a logger view (with document validation) for the <strong>PMFed</strong> appl
 <p>This tutorial presents how to start with PMFed.</p>
 
 <p>After having installed the python code in a folder of your choice, set the environment variable
-<code><strong>PMF_MODELS</strong></code> to any folder on the file system of your choice. 
-This simply defines the path where the models will be search in.</p>
+<code><strong>PMF_HOME</strong></code> to the installtion folder.</p>
+<p>Then set a second environment variable <code><strong>PMF_MODELS</strong></code> referencing 
+a folder of your choice on the file system. This simply defines the path where the models will be search in.</p>
 
-<p>Starting the PMFed application is as follow:</p>
+
+<p>Starting the PMFed application is as follow: Go to <code><strong>PMF_HOME</strong></code> and cd
+to the "PeXJ" folder. Here is the python file "PMDed.py. Simpy type from the command line:</p>
 
 <pre><span style="font-size: 10pt">&gt; python PMFed.py &lt;model&gt;</span></pre>
 
-<p>where the <strong>&lt;model&gt;</strong> refers to a folder inside the PMF_MODELS "root" folder. 
-But of what exactly consists the model?</p>
+<p>where the <strong>&lt;model&gt;</strong> refers to a folder inside the <code><strong>PMF_MODELS</strong></code>
+"root" folder. But of what exactly consists the model?</p>
 </p>
 
 <p>The user has written a XSD schema or a JSON Schema. This is his first "model", and for simplicity we assume he has
@@ -3009,14 +3001,15 @@ Moreover, the formular defines a formular item related to the attribute <code>_x
 
 <h3 id="L24117">Requirement </h3>
 
-<p>PMFed has been tested with Python-3.7, and should work for version higher than 3.7 too.</p>
+<p>PMFed has been tested with Python-3.12.</p>
   
 <p>The dependancies are:</p>
 
 <ul>
-  <li>PySide6 (for Qt 6.2.0)</li>
-  <li>lxml-4.2.5 (xml validation + XML comments)</li>
-  <li>jsonchema-3.2.0 (json validation)</li>
+  <li>PySide6-6.11.3</li>
+  <li>lxml [latest] (xml validation + XML comments)</li>
+  <li>jsonchema [latest] (json validation)</li>
+  <li>coverage [latest] (tests)</li>
 </ul>
 
 <p>Here too, higher version of these dependancies should work.</p>
@@ -3024,7 +3017,7 @@ Moreover, the formular defines a formular item related to the attribute <code>_x
 <p>Installation of the dependancies is straighforward with the python <strong>pip</strong> utility:</p>
 
 <pre>
-> python -m pip install PySide6
+> python -m pip install PySide6=6.11.3
 > python -m pip install lxml
 > python -m pip install jsonschema
 </pre>
@@ -3121,5 +3114,10 @@ main python module, or the location is given by the related environment variable
 
 <p>Investigate the examples making use of Ui files. Note the "conventions" used for the widgets names.</p>
 </div>
+<<<<<<< HEAD
+=======
+</div>
+</div>
+>>>>>>> 3e5da2a... c
 </body>
 </html>
